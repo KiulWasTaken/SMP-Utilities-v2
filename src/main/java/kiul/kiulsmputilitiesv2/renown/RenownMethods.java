@@ -27,24 +27,12 @@ public class RenownMethods {
     public static int dailyResetTime = 10;
 
     // Check and subsequently fix any possible null errors with a new player's renown
-    public static void renownCheckNull (Player p) {
-        if (RenownConfig.get().get(p.getUniqueId().toString()+".daily") == null) {
-            RenownConfig.get().set(p.getUniqueId().toString()+".daily",0);
-            RenownConfig.save();
-        }
-        if (RenownConfig.get().get(p.getUniqueId().toString()+".total") == null) {
-            RenownConfig.get().set(p.getUniqueId().toString()+".total",0);
-            RenownConfig.save();
-        }
-    }
-
 
     // Gives the player any amount of renown (added to their daily)
     public void giveRenown (Player p,double amount) {
         if (RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily") > dailyRenownCap) {
             amount = amount*overflowMultiplier;
         }
-        renownCheckNull(p);
         RenownConfig.get().set(p.getUniqueId().toString()+".daily",RenownConfig.get().get(p.getUniqueId().toString()+".daily"+amount));
         RenownConfig.save();
         if (PlayerConfig.get().getBoolean(p.getUniqueId().toString()+".alerts")) {
