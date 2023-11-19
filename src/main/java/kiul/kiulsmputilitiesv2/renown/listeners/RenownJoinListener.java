@@ -1,9 +1,7 @@
 package kiul.kiulsmputilitiesv2.renown.listeners;
 
-import kiul.kiulsmputilitiesv2.PlayerConfig;
-import kiul.kiulsmputilitiesv2.renown.RenownMethods;
+import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,8 +21,7 @@ public class RenownJoinListener implements Listener {
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".overflow", false);
         RenownConfig.get().addDefault(p.getUniqueId().toString() + ".daily", 0);
         RenownConfig.get().addDefault(p.getUniqueId().toString() + ".total", 0);
-        if (!PlayerConfig.get().contains(p.getUniqueId().toString() + ".timealive"))
-            PlayerConfig.get().set(p.getUniqueId().toString() + ".timealive", Long.valueOf(System.currentTimeMillis()));
         RenownConfig.save();
+        PlayerConfig.save();
     }
 }

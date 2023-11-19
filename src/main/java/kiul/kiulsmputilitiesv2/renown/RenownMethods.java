@@ -1,7 +1,8 @@
 package kiul.kiulsmputilitiesv2.renown;
 
+import kiul.kiulsmputilitiesv2.C;
 import kiul.kiulsmputilitiesv2.KiulSMPUtilitiesv2;
-import kiul.kiulsmputilitiesv2.PlayerConfig;
+import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -16,22 +17,12 @@ import java.util.UUID;
 
 public class RenownMethods {
 
-    public static double dailyRenownCap = 1000.00;
-
-    // Having a multiplier for overflow will allow us to lower/raise the gains to our will.
-    // For instance, we could make it so grinding overflow in the wee hours of the morning will give you terrible gains
-    // This would be an overall positive change to prevent cheesing the system!
-    public double overflowMultiplier = 1;
-
-    // Hour of the day at which the renown resets (24 hour)
-    public static int dailyResetTime = 10;
-
     // Check and subsequently fix any possible null errors with a new player's renown
 
     // Gives the player any amount of renown (added to their daily)
     public void giveRenown (Player p,double amount) {
-        if (RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily") > dailyRenownCap) {
-            amount = amount*overflowMultiplier;
+        if (RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily") > C.dailyRenownCap) {
+            amount = amount* C.overflowMultiplier;
         }
         RenownConfig.get().set(p.getUniqueId().toString()+".daily",RenownConfig.get().get(p.getUniqueId().toString()+".daily"+amount));
         RenownConfig.save();
@@ -52,7 +43,7 @@ public class RenownMethods {
 
     public static void initializeDailyRenownResetClock () {
         Calendar cal = Calendar.getInstance();
-        if(cal.get(Calendar.HOUR_OF_DAY) >= dailyResetTime)
+        if(cal.get(Calendar.HOUR_OF_DAY) >= C.dailyResetTime)
             cal.add(Calendar.DATE, 1);
 
         cal.set(Calendar.HOUR_OF_DAY, 0);

@@ -1,25 +1,18 @@
 package kiul.kiulsmputilitiesv2.renown.listeners;
 
-import kiul.kiulsmputilitiesv2.PlayerConfig;
-import kiul.kiulsmputilitiesv2.renown.RenownMethods;
+import kiul.kiulsmputilitiesv2.C;
+import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class EntityKill implements Listener {
-
-    //Armor required to count towards more renown
-    public static int armorRequired = 2;
 
     @EventHandler
     public void deathEvent(PlayerDeathEvent e) {
@@ -80,7 +73,7 @@ public class EntityKill implements Listener {
                 }
             }
         }
-        if (wornAcceptedArmor.size() >= armorRequired) {
+        if (wornAcceptedArmor.size() >= C.armorRequired) {
             return true;
         } else {
             return false;
