@@ -1,7 +1,7 @@
 package kiul.kiulsmputilitiesv2.renown.listeners;
 
-import kiul.kiulsmputilitiesv2.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.RenownMethods;
+import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
