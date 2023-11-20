@@ -71,7 +71,6 @@ public class PlayerKill implements Listener {
         }
         return wornAcceptedArmor.size();}
 
-    public HashMap<Player,Integer> playerValue = new HashMap<>();
 
     @EventHandler
     public void brokenArmourTracker (PlayerItemBreakEvent e) {

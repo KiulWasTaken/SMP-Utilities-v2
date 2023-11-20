@@ -1,5 +1,6 @@
 package kiul.kiulsmputilitiesv2.renown;
 
+import kiul.kiulsmputilitiesv2.C;
 import kiul.kiulsmputilitiesv2.KiulSMPUtilitiesv2;
 import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
@@ -39,8 +40,10 @@ public class RenownMethods {
             } else {
                 if (!warnedPlayers.contains(p.getUniqueId())) {
                     double difference = RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") - dailyRenownCap;
+                    p.sendMessage(ChatColor.RED + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                     p.sendMessage(ChatColor.YELLOW + "You are " + difference + ChatColor.GOLD + " \uD83D\uDC80 " + ChatColor.YELLOW + "over the daily limit, to bypass the daily limit run: " + ChatColor.RED + " /renown overflow");
                     p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "WARNING:" + ChatColor.RESET + ChatColor.RED + " Enabling overflow will reveal your location to anyone with a renown compass. Use at your own risk.");
+                    p.sendMessage(ChatColor.RED + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                     warnedPlayers.add(p.getUniqueId());
                 }
                 return;

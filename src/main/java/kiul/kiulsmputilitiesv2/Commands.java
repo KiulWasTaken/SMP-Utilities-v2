@@ -5,12 +5,14 @@ import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -28,6 +30,12 @@ public class Commands implements TabExecutor {
                             // Decides whether to send an actionbar message to the player whenever they gain renown
                             PlayerConfig.get().set(p.getUniqueId().toString() + ".alerts", !PlayerConfig.get().getBoolean(p.getUniqueId().toString() + ".alerts"));
                             PlayerConfig.save();
+                            if (PlayerConfig.get().getBoolean(p.getUniqueId().toString() + ".alerts")) {
+                                p.sendMessage(C.prefix + ChatColor.WHITE + "Renown actionbar alerts " + ChatColor.GREEN + "On");
+                            } else {
+                                p.sendMessage(C.prefix + ChatColor.WHITE + "Renown actionbar alerts " + ChatColor.RED + "Off");
+                            }
+
                             break;
                         case "top":
                             ConfigurationSection cf = RenownConfig.get().getConfigurationSection("");
@@ -79,16 +87,47 @@ public class Commands implements TabExecutor {
                             if (RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") >= C.dailyRenownCap) {
                                 PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow", true);
                             } else {
-                                p.sendMessage("You have not surpassed the daily limit of: " + C.dailyRenownCap + ChatColor.GOLD + " \uD83D\uDC80");
+                                p.sendMessage(C.prefix + "You have not surpassed the daily limit of: " + C.dailyRenownCap + ChatColor.GOLD + " \uD83D\uDC80");
                             }
                             break;
                     }
                 } else {
                     // Send player their renown score
                     // Will make this nicer later!
-                    p.sendMessage("" + (RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily")+RenownConfig.get().getDouble(p.getUniqueId().toString()+".total"))+ ChatColor.GOLD + " \uD83D\uDC80");
+                    p.sendMessage(C.prefix + "" + (RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily")+RenownConfig.get().getDouble(p.getUniqueId().toString()+".total"))+ ChatColor.GOLD + " \uD83D\uDC80");
                 }
                 break;
+            case "scheduledrestart":
+                if (!C.restarting) {
+                    C.restarting = true;
+                    new BukkitRunnable() {
+                        int minutes = Integer.parseInt(args[0]);
+                        int tick = 0;
+                        int warnFrequency = 0;
+                        @Override
+                        public void run() {
+                            if (tick < minutes) {
+                                tick++;
+                                warnFrequency++;
+                                if (warnFrequency >= 2) {
+                                    p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                                    Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "RESTART" + ChatColor.RESET + ChatColor.GRAY + "»" + ChatColor.WHITE + "Server Restarting In " + ChatColor.RED + (tick - minutes) + "m");
+                                    p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                                    warnFrequency = 0;
+                                }
+                            } else {
+                                p.sendMessage(ChatColor.RED + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                                Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "RESTART" + ChatColor.RESET + ChatColor.GRAY + "»" + ChatColor.WHITE + "Server Restarting");
+                                p.sendMessage(ChatColor.RED + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                                Bukkit.getServer().shutdown();
+                            }
+
+                        }
+                    }.runTaskTimer(C.plugin,0,1200);
+                } else {
+                    p.sendMessage(C.prefix + ChatColor.RED+"Restart has already been scheduled");
+                }
+
         }
         return false;
     }

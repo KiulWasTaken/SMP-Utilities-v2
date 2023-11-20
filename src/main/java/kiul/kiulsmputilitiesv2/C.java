@@ -10,6 +10,10 @@ public class C { //Inner-Config
     private static final Pattern HEX_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-f])");
     public static Plugin plugin = KiulSMPUtilitiesv2.getPlugin(KiulSMPUtilitiesv2.class);
 
+    public static String prefix = ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "SMP-UTILITIES-V2" + ChatColor.RESET + ChatColor.GRAY + "»";
+
+    public static boolean restarting = false;
+
     //
     /** Configerable-shit */
     //EntityKill
