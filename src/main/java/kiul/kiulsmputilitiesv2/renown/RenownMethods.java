@@ -1,17 +1,20 @@
 package kiul.kiulsmputilitiesv2.renown;
 
 import kiul.kiulsmputilitiesv2.KiulSMPUtilitiesv2;
-import kiul.kiulsmputilitiesv2.PlayerConfig;
+import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 public class RenownMethods {
@@ -27,11 +30,24 @@ public class RenownMethods {
     public static int dailyResetTime = 10;
 
     // Check and subsequently fix any possible null errors with a new player's renown
-
+    public static List<UUID> warnedPlayers = new ArrayList<>();
     // Gives the player any amount of renown (added to their daily)
     public static void giveRenown (Player p,double amount) {
         if (RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily") > dailyRenownCap) {
-            amount = amount*overflowMultiplier;
+            if (PlayerConfig.get().getBoolean(p.getUniqueId()+".overflow")) {
+                amount = amount * overflowMultiplier;
+            } else {
+                if (!warnedPlayers.contains(p.getUniqueId())) {
+                    double difference = RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") - dailyRenownCap;
+                    p.sendMessage(ChatColor.YELLOW + "You are " + difference + ChatColor.GOLD + " \uD83D\uDC80 " + ChatColor.YELLOW + "over the daily limit, to bypass the daily limit run: " + ChatColor.RED + " /renown overflow");
+                    p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "WARNING:" + ChatColor.RESET + ChatColor.RED + " Enabling overflow will reveal your location to anyone with a renown compass. Use at your own risk.");
+                    warnedPlayers.add(p.getUniqueId());
+                }
+                return;
+            }
+        }
+        if (p.getInventory().contains(Material.DRAGON_EGG)) {
+            amount = amount*1.5;
         }
         RenownConfig.get().set(p.getUniqueId().toString()+".daily",RenownConfig.get().get(p.getUniqueId().toString()+".daily"+amount));
         RenownConfig.save();

@@ -19,6 +19,7 @@ public class Join implements Listener {
     public static void createPlayerConfigPaths(Player p) {
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".alerts", false);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".overflow", false);
+        PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".value", 0);
         RenownConfig.get().addDefault(p.getUniqueId().toString() + ".daily", 0);
         RenownConfig.get().addDefault(p.getUniqueId().toString() + ".total", 0);
         if (!PlayerConfig.get().contains(p.getUniqueId().toString() + ".timealive"))
