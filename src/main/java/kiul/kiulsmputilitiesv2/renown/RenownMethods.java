@@ -21,7 +21,7 @@ public class RenownMethods {
     // Having a multiplier for overflow will allow us to lower/raise the gains to our will.
     // For instance, we could make it so grinding overflow in the wee hours of the morning will give you terrible gains
     // This would be an overall positive change to prevent cheesing the system!
-    public double overflowMultiplier = 1;
+    public static double overflowMultiplier = 1;
 
     // Hour of the day at which the renown resets (24 hour)
     public static int dailyResetTime = 10;
@@ -29,7 +29,7 @@ public class RenownMethods {
     // Check and subsequently fix any possible null errors with a new player's renown
 
     // Gives the player any amount of renown (added to their daily)
-    public void giveRenown (Player p,double amount) {
+    public static void giveRenown (Player p,double amount) {
         if (RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily") > dailyRenownCap) {
             amount = amount*overflowMultiplier;
         }

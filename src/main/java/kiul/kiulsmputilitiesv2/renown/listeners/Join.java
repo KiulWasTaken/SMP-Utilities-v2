@@ -1,15 +1,13 @@
 package kiul.kiulsmputilitiesv2.renown.listeners;
 
 import kiul.kiulsmputilitiesv2.PlayerConfig;
-import kiul.kiulsmputilitiesv2.renown.RenownMethods;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class RenownJoinListener implements Listener {
+public class Join implements Listener {
 
     // Sets up the playerConfig for Commands.java
     @EventHandler
