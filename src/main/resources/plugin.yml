@@ -2,3 +2,5 @@ name: KiulSMPUtilitiesv2
 version: '${project.version}'
 main: kiul.kiulsmputilitiesv2.KiulSMPUtilitiesv2
 api-version: '1.20'
+commands:
+  renown:

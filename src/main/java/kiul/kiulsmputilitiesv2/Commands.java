@@ -1,15 +1,21 @@
 package kiul.kiulsmputilitiesv2;
 
 import kiul.kiulsmputilitiesv2.renown.RenownMethods;
+import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 
-public class Commands implements CommandExecutor {
+import java.text.DecimalFormat;
+import java.util.*;
+
+public class Commands implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command cmd, String label, String[] args) {
@@ -24,14 +30,56 @@ public class Commands implements CommandExecutor {
                             PlayerConfig.save();
                             break;
                         case "top":
-                            // Send top 10 renown scores
+                            ConfigurationSection cf = RenownConfig.get().getConfigurationSection("");
+
+                            HashMap<String, Integer> unsortedBalance = new HashMap<>();
+                            for (String keys : cf.getKeys(false)) {
+                                unsortedBalance.put(keys, RenownConfig.get().getInt(keys + ".total"));
+                            }
+
+                            LinkedHashMap<String, Integer> sortedRenown = new LinkedHashMap<>();
+                            unsortedBalance.entrySet()
+                                    .stream()
+                                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                                    .forEachOrdered(x -> sortedRenown.put(x.getKey(), x.getValue()));
+
+                            List<String> keys = new ArrayList<>(sortedRenown.keySet());
+
+                            int playersPerPage = 10;
+                            int page = 1;
+                            if (args.length == 2) {
+                                try {
+                                    page = Integer.parseInt(args[1]);
+                                } catch (NumberFormatException ea) {
+                                }
+                            }
+
+                            int i = (page - 1) * playersPerPage;
+
+                            try {
+                                keys.get(i);
+                                if (page > 0 && sortedRenown.size() > 0 && sortedRenown.size() <= (sortedRenown.size() - 1 / playersPerPage) * playersPerPage) {
+                                    p.sendMessage(C.t("&#39f782Renown leaderboard &6- &#578063page &c" + page + "&#578063 of &c" + (sortedRenown.size() / playersPerPage + 1)));
+                                    for (i = (page - 1) * playersPerPage; i >= page - 1 * 5 && i <= page * 5; i++) {
+                                        String key = keys.get(i);
+                                        p.sendMessage(C.t("&#baad49#" + (i + 1) + "&6. &#8d959e" + Bukkit.getOfflinePlayer(UUID.fromString(key)).getName() + " &8» &#7bd488" + sortedRenown.get(key)));
+                                        if (i == page * playersPerPage - 1 || i == sortedRenown.size() - 1) {
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    p.sendMessage(C.genericFail);
+                                }
+                            } catch (IndexOutOfBoundsException exa) {
+                                p.sendMessage(C.genericFail);
+                            }
                             break;
                         case "overflow":
                             // Disable player cap - enable "overflow", allowing player to earn extra renown.
-                            if (RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") >= RenownMethods.dailyRenownCap) {
+                            if (RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") >= C.dailyRenownCap) {
                                 PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow", true);
                             } else {
-                                p.sendMessage("You have not surpassed the daily limit of: " + RenownMethods.dailyRenownCap + ChatColor.GOLD + " \uD83D\uDC80");
+                                p.sendMessage("You have not surpassed the daily limit of: " + C.dailyRenownCap + ChatColor.GOLD + " \uD83D\uDC80");
                             }
                             break;
                     }
@@ -43,5 +91,24 @@ public class Commands implements CommandExecutor {
                 break;
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+
+        List<String> arguments = new ArrayList<>();
+
+        if (args.length == 1) {
+            arguments.add("showalerts");
+            arguments.add("top");
+            arguments.add("overflow");
+        } else {
+            switch (args[0].toLowerCase()) {
+                case "top":
+                    break;
+            }
+        }
+
+        return arguments;
     }
 }
