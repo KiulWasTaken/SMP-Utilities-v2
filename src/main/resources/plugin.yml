@@ -4,3 +4,4 @@ main: kiul.kiulsmputilitiesv2.KiulSMPUtilitiesv2
 api-version: '1.20'
 commands:
   renown:
+  restart-in:

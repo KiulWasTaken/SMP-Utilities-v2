@@ -20,10 +20,9 @@ public class Join implements Listener {
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".alerts", false);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".overflow", false);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".value", 0);
-        RenownConfig.get().addDefault(p.getUniqueId().toString() + ".daily", 0);
-        RenownConfig.get().addDefault(p.getUniqueId().toString() + ".total", 0);
-        if (!PlayerConfig.get().contains(p.getUniqueId().toString() + ".timealive"))
-            PlayerConfig.get().set(p.getUniqueId().toString() + ".timealive", Long.valueOf(System.currentTimeMillis()));
+        RenownConfig.get().addDefault(p.getUniqueId().toString() + ".daily", 0.0);
+        RenownConfig.get().addDefault(p.getUniqueId().toString() + ".total", 0.0);
         RenownConfig.save();
+        PlayerConfig.save();
     }
 }

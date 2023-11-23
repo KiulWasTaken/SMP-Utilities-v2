@@ -12,6 +12,8 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.VillagerAcquireTradeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
@@ -21,25 +23,25 @@ public class GiveRenown implements Listener {
 
     // Item materials and the renown value for crafting them
     public HashMap<ItemStack,Double> rewardedItems = new HashMap<ItemStack,Double>() {{
-        put(new ItemStack(Material.NETHERITE_HELMET),7.5);
-        put(new ItemStack(Material.NETHERITE_CHESTPLATE),12.0);
-        put(new ItemStack(Material.NETHERITE_LEGGINGS),10.5);
-        put(new ItemStack(Material.NETHERITE_BOOTS),6.0);
-        put(new ItemStack(Material.NETHERITE_SWORD),3.0);
-        put(new ItemStack(Material.NETHERITE_PICKAXE),4.5);
-        put(new ItemStack(Material.NETHERITE_AXE),4.5);
-        put(new ItemStack(Material.NETHERITE_SHOVEL),1.5);
-        put(new ItemStack(Material.NETHERITE_HOE),3.0);
+        put(new ItemStack(Material.NETHERITE_HELMET),32.0);
+        put(new ItemStack(Material.NETHERITE_CHESTPLATE),51.2);
+        put(new ItemStack(Material.NETHERITE_LEGGINGS),44.8);
+        put(new ItemStack(Material.NETHERITE_BOOTS),25.6);
+        put(new ItemStack(Material.NETHERITE_SWORD),12.8);
+        put(new ItemStack(Material.NETHERITE_PICKAXE),19.2);
+        put(new ItemStack(Material.NETHERITE_AXE),19.2);
+        put(new ItemStack(Material.NETHERITE_SHOVEL),6.4);
+        put(new ItemStack(Material.NETHERITE_HOE),12.8);
 
-        put(new ItemStack(Material.DIAMOND_HELMET),5.0);
-        put(new ItemStack(Material.DIAMOND_HELMET),8.0);
-        put(new ItemStack(Material.DIAMOND_HELMET),7.0);
-        put(new ItemStack(Material.DIAMOND_HELMET),4.0);
-        put(new ItemStack(Material.DIAMOND_SWORD),2.0);
-        put(new ItemStack(Material.DIAMOND_PICKAXE),3.0);
-        put(new ItemStack(Material.DIAMOND_AXE),3.0);
-        put(new ItemStack(Material.DIAMOND_SHOVEL),1.0);
-        put(new ItemStack(Material.DIAMOND_HOE),2.0);
+        put(new ItemStack(Material.DIAMOND_HELMET),16.0);
+        put(new ItemStack(Material.DIAMOND_CHESTPLATE),25.6);
+        put(new ItemStack(Material.DIAMOND_LEGGINGS),22.4);
+        put(new ItemStack(Material.DIAMOND_BOOTS),12.8);
+        put(new ItemStack(Material.DIAMOND_SWORD),6.4);
+        put(new ItemStack(Material.DIAMOND_PICKAXE),9.6);
+        put(new ItemStack(Material.DIAMOND_AXE),9.6);
+        put(new ItemStack(Material.DIAMOND_SHOVEL),3.2);
+        put(new ItemStack(Material.DIAMOND_HOE),6.4);
     }};
 
     // Block materials and the renown value for breaking them
@@ -71,6 +73,9 @@ public class GiveRenown implements Listener {
 
     @EventHandler
     public void craftingGiveRenown (CraftItemEvent e) {
+        if (e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+            // count how many items got shift-clicked https://bukkit.org/threads/cant-get-amount-of-shift-click-craft-item.79090/
+        }
         if (rewardedItems.containsKey(e.getInventory().getResult())) {
             RenownMethods.giveRenown((Player) e.getView().getPlayer(),rewardedItems.get(e.getInventory().getResult()));
         }
@@ -98,13 +103,21 @@ public class GiveRenown implements Listener {
     @EventHandler
     public void noScum (BlockPlaceEvent e) {
         if (rewardedBlocks.containsKey(e.getBlock().getType())) {
-            e.getBlock().setMetadata("fatass",new FixedMetadataValue(KiulSMPUtilitiesv2.getPlugin(KiulSMPUtilitiesv2.class),"pp"));
+            e.getBlock().setMetadata("pp",new FixedMetadataValue(KiulSMPUtilitiesv2.getPlugin(KiulSMPUtilitiesv2.class),"pp"));
         }
     }
 
     @EventHandler
     public void enchantRenown (EnchantItemEvent e) {
         RenownMethods.giveRenown(e.getEnchanter(),e.getExpLevelCost()+(e.getEnchantsToAdd().size()*e.whichButton()));
+    }
+
+    @EventHandler
+    public void smithingRenown (SmithItemEvent e) {
+        if (rewardedItems.containsKey(e.getInventory().getResult())) {
+            e.getView().getPlayer().sendMessage(e.getInventory().getResult().toString());
+            RenownMethods.giveRenown((Player)e.getView().getPlayer(),rewardedItems.get(e.getInventory().getResult()));
+        }
     }
 
     @EventHandler

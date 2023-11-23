@@ -24,10 +24,7 @@ public class PlayerKill implements Listener {
         if (deadPlayer.getKiller() != null) {
 
             Player killerPlayer = e.getEntity().getKiller();
-            double deadPlayerRenown = RenownConfig.get().getDouble(deadPlayer.getUniqueId() + ".total");
-            double euler = 2.718281828459;
-            double time = deadPlayer.getStatistic(Statistic.TIME_SINCE_DEATH) + armorValue(deadPlayer) + PlayerConfig.get().getInt(deadPlayer.getUniqueId()+".value");
-            double givenRenown = (0.4 + (deadPlayerRenown / 10000)) / (0.001 + Math.pow(euler, time - 1.4));
+            double givenRenown = calculateKillValue(deadPlayer);
 
             if (PlayerConfig.get().getBoolean(deadPlayer.getUniqueId() + ".overflow")) {
                 PlayerConfig.get().set(deadPlayer.getUniqueId() + ".overflow", false);
@@ -45,7 +42,7 @@ public class PlayerKill implements Listener {
         }
     }
 
-    public List<Material> acceptedArmor = new ArrayList<>() {{
+    public static List<Material> acceptedArmor = new ArrayList<>() {{
         add(Material.DIAMOND_HELMET);
         add(Material.DIAMOND_CHESTPLATE);
         add(Material.DIAMOND_LEGGINGS);
@@ -55,7 +52,7 @@ public class PlayerKill implements Listener {
         add(Material.NETHERITE_LEGGINGS);
         add(Material.NETHERITE_BOOTS);
         }};
-    public int armorValue(Player p) {
+    public static int armorValue(Player p) {
 
         List<ItemStack> wornAcceptedArmor = new ArrayList<>();
         for (ItemStack armor : p.getInventory().getArmorContents()) {
@@ -78,5 +75,12 @@ public class PlayerKill implements Listener {
             Player p = e.getPlayer();
             PlayerConfig.get().set(p.getUniqueId()+".value",PlayerConfig.get().getInt(p.getUniqueId()+".value")+1);
         }
+    }
+    public static double calculateKillValue (Player p) {
+        double deadPlayerRenown = RenownConfig.get().getDouble(p.getUniqueId() + ".total");
+        double euler = 2.718281828459;
+        double time = p.getStatistic(Statistic.TIME_SINCE_DEATH) + armorValue(p) + PlayerConfig.get().getInt(p.getUniqueId()+".value");
+        double givenRenown = (0.8 + (deadPlayerRenown / 10000)) / (0.001 + Math.pow(euler, time - 1.4));
+        return givenRenown;
     }
 }

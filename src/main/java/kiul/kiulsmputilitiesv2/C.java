@@ -10,16 +10,16 @@ public class C { //Inner-Config
     private static final Pattern HEX_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-f])");
     public static Plugin plugin = KiulSMPUtilitiesv2.getPlugin(KiulSMPUtilitiesv2.class);
 
-    public static String prefix = ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "SMP-UTILITIES-V2" + ChatColor.RESET + ChatColor.GRAY + "»";
-
+    public static String prefix = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "SMP" + ChatColor.RESET + ChatColor.GRAY + " » ";
+    public static String symbol = ChatColor.GOLD + "☠";
     public static boolean restarting = false;
 
     //
-    /** Configerable-shit */
+    /** Configurable-shit */
     //EntityKill
     public static int armorRequired = 2; //armour required to gain renown from kill
     //RenownMethods
-    public static double dailyRenownCap = 1000.00; //Cap of renown before overflow
+    public static double dailyRenownCap = 1200.00; //Cap of renown before overflow
     public static double overflowMultiplier = 1; //lower/raise the gains to our will.
     public static int dailyResetTime = 10; // Hour of the day at which the renown resets (24 hour)
 
