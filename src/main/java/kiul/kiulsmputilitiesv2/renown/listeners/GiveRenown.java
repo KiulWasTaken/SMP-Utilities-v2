@@ -73,11 +73,9 @@ public class GiveRenown implements Listener {
 
     @EventHandler
     public void craftingGiveRenown (CraftItemEvent e) {
-        if (e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-            // count how many items got shift-clicked https://bukkit.org/threads/cant-get-amount-of-shift-click-craft-item.79090/
-        }
         if (rewardedItems.containsKey(e.getInventory().getResult())) {
-            RenownMethods.giveRenown((Player) e.getView().getPlayer(),rewardedItems.get(e.getInventory().getResult()));
+            int amount = getCraftedItem(e).getAmount();
+            RenownMethods.giveRenown((Player) e.getView().getPlayer(),rewardedItems.get(e.getInventory().getResult())*amount);
         }
     }
 
@@ -125,5 +123,23 @@ public class GiveRenown implements Listener {
         if (rewardedEntities.containsKey(e.getEntity().getType()) && e.getEntity().getKiller() instanceof Player) {
             RenownMethods.giveRenown(e.getEntity().getKiller(),rewardedEntities.get(e.getEntity().getType()));
         }
+    }
+
+    private ItemStack getCraftedItem(CraftItemEvent evt) {
+        if (evt.isShiftClick()) {
+            final ItemStack recipeResult = evt.getRecipe().getResult();
+            final int resultAmt = recipeResult.getAmount(); // Bread = 1, Cookie = 8, etc.
+            int leastIngredient = -1;
+            for (ItemStack item : evt.getInventory().getMatrix()) {
+                if (item != null && !item.getType().equals(Material.AIR)) {
+                    final int re = item.getAmount() * resultAmt;
+                    if (leastIngredient == -1 || re < leastIngredient) {
+                        leastIngredient = item.getAmount() * resultAmt;
+                    }
+                }
+            }
+            return new ItemStack(recipeResult.getType(), leastIngredient, recipeResult.getDurability());
+        }
+        return evt.getCurrentItem();
     }
 }

@@ -14,25 +14,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BountyParticles implements Listener {
 
-    public static List<Player> movedRecently = new ArrayList<>();
-    @EventHandler
-    public void moveEvent (PlayerVelocityEvent e) {
-            if (!movedRecently.contains(e.getPlayer())) {
-                movedRecently.add(e.getPlayer());
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        movedRecently.remove(e.getPlayer());
-                    }
-                }.runTaskLater(C.plugin, 5);
-            }
-        }
 
     public static void startRepeatingMovementCheck () {
 
@@ -40,7 +28,7 @@ public class BountyParticles implements Listener {
             @Override
             public void run() {
                 for (Player onlinePlayers : Bukkit.getOnlinePlayers()) {
-                    if (PlayerKill.calculateKillValue(onlinePlayers) > 500 && !movedRecently.contains(onlinePlayers)) {
+                    if (PlayerKill.calculateKillValue(onlinePlayers) > 500 && onlinePlayers.getVelocity().equals(new Vector(0,-0.0784000015258789,0))) {
                         for (Entity e : onlinePlayers.getNearbyEntities(15,15,15)) {
                             if (e instanceof Player) {
                                 if (PlayerKill.calculateKillValue(onlinePlayers) < 1000) {
@@ -54,6 +42,6 @@ public class BountyParticles implements Listener {
                 }
 
             }
-        }.runTaskTimer(C.plugin,0,5);
+        }.runTaskTimer(C.plugin,0,20);
     }
 }

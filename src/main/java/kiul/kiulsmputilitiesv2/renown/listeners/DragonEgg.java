@@ -16,6 +16,7 @@ public class DragonEgg implements Listener {
         if (e.getItemDrop().getItemStack().getType().equals(Material.DRAGON_EGG)) {
             e.getItemDrop().setInvulnerable(true);
             e.getItemDrop().setUnlimitedLifetime(true);
+            e.getItemDrop().setVisualFire(false);
         }
     }
 }
