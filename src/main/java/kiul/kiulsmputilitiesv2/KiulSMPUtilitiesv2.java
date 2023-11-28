@@ -8,6 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+
 public final class KiulSMPUtilitiesv2 extends JavaPlugin {
 
     @Override
@@ -28,6 +30,8 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
 
         RenownConfig.setup();
         PlayerConfig.setup();
+        RenownConfig.get().addDefault("overflowing",new ArrayList<Player>());
+        RenownConfig.save();
         RenownMethods.initializeDailyRenownResetClock();
         BountyParticles.startRepeatingMovementCheck();
 
@@ -40,5 +44,7 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        RenownConfig.get().set("overflowing",C.overflowingPlayers);
+        RenownConfig.save();
     }
 }

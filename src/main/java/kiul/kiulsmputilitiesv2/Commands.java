@@ -86,7 +86,7 @@ public class Commands implements TabExecutor {
                             break;
                         case "overflow":
                             // Disable player cap - enable "overflow", allowing player to earn extra renown.
-                            if (RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") >= RenownMethods.dailyRenownCap) {
+                            if (RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") >= C.dailyRenownCap) {
                                 PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow", true);
                                 if (RenownMethods.differenceStorage.containsKey(p.getUniqueId())) {
                                     RenownConfig.get().set(p.getUniqueId().toString() + ".daily", RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily" + RenownMethods.differenceStorage.get(p.getUniqueId())));
@@ -94,15 +94,18 @@ public class Commands implements TabExecutor {
                                 }
                                 PlayerConfig.save();
                             } else {
-                                p.sendMessage(C.prefix + "You have not surpassed the daily limit of: " + RenownMethods.dailyRenownCap + " " + C.symbol);
+                                p.sendMessage(C.prefix + "You have not surpassed the daily limit of: " + C.dailyRenownCap + " " + C.symbol);
                             }
                             break;
                     }
                 }
                 break;
             case "restart-in":
-                if (!C.restarting) {
+                if (!C.restarting && p.isOp()) {
                     C.restarting = true;
+                    p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                    Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "RESTART" + ChatColor.RESET + ChatColor.GRAY + " » " + ChatColor.WHITE + "Server Restarting In " + ChatColor.RED + args[0] + "m");
+                    p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                     new BukkitRunnable() {
                         int minutes = Integer.parseInt(args[0]);
                         int tick = 0;
@@ -114,7 +117,7 @@ public class Commands implements TabExecutor {
                                 warnFrequency++;
                                 if (warnFrequency >= 2) {
                                     p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
-                                    Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "RESTART" + ChatColor.RESET + ChatColor.GRAY + " » " + ChatColor.WHITE + "Server Restarting In " + ChatColor.RED + (tick - minutes) + "m");
+                                    Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "RESTART" + ChatColor.RESET + ChatColor.GRAY + " » " + ChatColor.WHITE + "Server Restarting In " + ChatColor.RED + (minutes - tick) + "m");
                                     p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                                     warnFrequency = 0;
                                 }

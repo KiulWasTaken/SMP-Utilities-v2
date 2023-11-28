@@ -1,5 +1,6 @@
 package kiul.kiulsmputilitiesv2.renown.listeners;
 
+import kiul.kiulsmputilitiesv2.C;
 import kiul.kiulsmputilitiesv2.renown.RenownMethods;
 import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
@@ -36,7 +37,7 @@ public class PlayerKill implements Listener {
             PlayerConfig.get().set(deadPlayer.getUniqueId()+".value",0);
 
             if (PlayerConfig.get().getBoolean(killerPlayer.getUniqueId() + ".overflow")) {
-                givenRenown = givenRenown * RenownMethods.overflowMultiplier;
+                givenRenown = givenRenown * C.overflowMultiplier;
             }
             RenownMethods.giveRenown(killerPlayer, givenRenown);
         }
