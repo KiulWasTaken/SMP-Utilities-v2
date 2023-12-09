@@ -10,11 +10,12 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class RenownMethods {
 
-
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     public static List<UUID> warnedPlayers = new ArrayList<>();
     // Gives the player any amount of renown (added to their daily)
 
@@ -44,7 +45,7 @@ public class RenownMethods {
         RenownConfig.get().set(p.getUniqueId().toString()+".daily",RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily")+amount);
         RenownConfig.save();
         if (PlayerConfig.get().getBoolean(p.getUniqueId().toString()+".alerts")) {
-            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("+ " + amount + " " + C.symbol));
+            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("+ " + df.format(amount) + " " + C.symbol));
         }
     }
 

@@ -21,7 +21,7 @@ public class C { //Inner-Config
 
     //
     /** Configurable-shit */
-    public static double dailyRenownCap = 1200.00; //Cap of renown before overflow
+    public static double dailyRenownCap = 600.00; //Cap of renown before overflow
     public static double overflowMultiplier = 1; //lower/raise the gains to our will.
     public static int dailyResetTime = 10; // Hour of the day at which the renown resets (24 hour)
     public static int dragonEggPickupDelayMinutes = 10;

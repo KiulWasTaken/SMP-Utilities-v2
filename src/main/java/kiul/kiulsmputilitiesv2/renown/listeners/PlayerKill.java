@@ -31,15 +31,17 @@ public class PlayerKill implements Listener {
                 PlayerConfig.get().set(deadPlayer.getUniqueId() + ".overflow", false);
                 givenRenown = givenRenown + RenownConfig.get().getDouble(deadPlayer.getUniqueId() + ".daily");
                 RenownConfig.get().set(deadPlayer.getUniqueId() + ".daily", 0);
-                RenownConfig.save();
-                PlayerConfig.save();
+
             }
             PlayerConfig.get().set(deadPlayer.getUniqueId()+".value",0);
+
 
             if (PlayerConfig.get().getBoolean(killerPlayer.getUniqueId() + ".overflow")) {
                 givenRenown = givenRenown * C.overflowMultiplier;
             }
             RenownMethods.giveRenown(killerPlayer, givenRenown);
+            RenownConfig.save();
+            PlayerConfig.save();
         }
     }
 
@@ -80,8 +82,8 @@ public class PlayerKill implements Listener {
     public static double calculateKillValue (Player p) {
         double deadPlayerRenown = RenownConfig.get().getDouble(p.getUniqueId() + ".total");
         double euler = 2.718281828459;
-        double time = p.getStatistic(Statistic.TIME_SINCE_DEATH) + armorValue(p) + PlayerConfig.get().getInt(p.getUniqueId()+".value");
-        double givenRenown = (0.8 + (deadPlayerRenown / 10000)) / (0.001 + Math.pow(euler, time - 1.4));
+        double time = (p.getStatistic(Statistic.TIME_SINCE_DEATH)/20/60/60) + armorValue(p) + PlayerConfig.get().getInt(p.getUniqueId()+".value");;
+        double givenRenown = (0.8 + (deadPlayerRenown / 10000)) / (0.001 + Math.pow(euler,(-time - 1.4)));
         return givenRenown;
     }
 }

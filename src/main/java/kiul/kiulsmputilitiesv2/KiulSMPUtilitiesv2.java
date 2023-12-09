@@ -1,5 +1,6 @@
 package kiul.kiulsmputilitiesv2;
 
+import kiul.kiulsmputilitiesv2.itemhistory.listeners.ItemCraft;
 import kiul.kiulsmputilitiesv2.renown.RenownMethods;
 import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
@@ -22,7 +23,7 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new GiveRenown(),this);
         getServer().getPluginManager().registerEvents(new DragonEgg(),this);
         getServer().getPluginManager().registerEvents(new BountyParticles(),this);
-
+        getServer().getPluginManager().registerEvents(new ItemCraft(),this);
 
         //Commands
         getCommand("renown").setExecutor(new Commands());

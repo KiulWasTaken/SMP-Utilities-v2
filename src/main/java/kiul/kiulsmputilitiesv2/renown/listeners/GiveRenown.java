@@ -22,7 +22,7 @@ import java.util.HashMap;
 public class GiveRenown implements Listener {
 
     // Item materials and the renown value for crafting them
-    public HashMap<ItemStack,Double> rewardedItems = new HashMap<ItemStack,Double>() {{
+    public static HashMap<ItemStack,Double> rewardedItems = new HashMap<ItemStack,Double>() {{
         put(new ItemStack(Material.NETHERITE_HELMET),32.0);
         put(new ItemStack(Material.NETHERITE_CHESTPLATE),51.2);
         put(new ItemStack(Material.NETHERITE_LEGGINGS),44.8);
@@ -112,8 +112,7 @@ public class GiveRenown implements Listener {
 
     @EventHandler
     public void smithingRenown (SmithItemEvent e) {
-        if (rewardedItems.containsKey(e.getInventory().getResult())) {
-            e.getView().getPlayer().sendMessage(e.getInventory().getResult().toString());
+        if (rewardedItems.containsKey(e.getInventory().getRecipe().getResult())) {
             RenownMethods.giveRenown((Player)e.getView().getPlayer(),rewardedItems.get(e.getInventory().getResult()));
         }
     }
