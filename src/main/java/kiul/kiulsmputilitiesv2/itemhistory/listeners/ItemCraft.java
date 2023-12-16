@@ -1,5 +1,6 @@
 package kiul.kiulsmputilitiesv2.itemhistory.listeners;
 
+import kiul.kiulsmputilitiesv2.C;
 import kiul.kiulsmputilitiesv2.itemhistory.ItemMethods;
 import kiul.kiulsmputilitiesv2.renown.RenownMethods;
 import kiul.kiulsmputilitiesv2.renown.listeners.GiveRenown;
@@ -19,13 +20,13 @@ import java.util.List;
 
 public class ItemCraft implements Listener {
 
-    private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
+
 
     @EventHandler
     public void craftItemEvent (CraftItemEvent e) {
         if (GiveRenown.rewardedItems.containsKey(e.getRecipe().getResult())) {
             LocalDate currentDate = LocalDate.now();
-            ItemMethods.addLore(e.getInventory().getResult(),ChatColor.GRAY + "\uD83D\uDEE0 - " + ((Player)e.getView().getPlayer()).getDisplayName() + ChatColor.DARK_GRAY + " (" + dtf.format(currentDate) + ")");
+            ItemMethods.addLore(e.getInventory().getResult(),ChatColor.GRAY + "\uD83D\uDEE0 - " + ((Player)e.getView().getPlayer()).getDisplayName() + ChatColor.DARK_GRAY + " (" + C.dtf.format(currentDate) + ")");
 
         }
     }
@@ -34,7 +35,7 @@ public class ItemCraft implements Listener {
     public void smithDate (SmithItemEvent e) {
         if (GiveRenown.rewardedItems.containsKey(e.getInventory().getRecipe().getResult())) {
             LocalDate currentDate = LocalDate.now();
-            ItemMethods.addLore(e.getInventory().getResult(),ChatColor.GRAY + "↑ - " + ((Player)e.getView().getPlayer()).getDisplayName() + ChatColor.DARK_GRAY + " (" + dtf.format(currentDate) + ")");
+            ItemMethods.addLore(e.getInventory().getResult(),ChatColor.GRAY + "↑ - " + ((Player)e.getView().getPlayer()).getDisplayName() + ChatColor.DARK_GRAY + " (" + C.dtf.format(currentDate) + ")");
 
         }
     }

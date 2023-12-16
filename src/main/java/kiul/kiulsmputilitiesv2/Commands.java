@@ -1,20 +1,17 @@
 package kiul.kiulsmputilitiesv2;
 
 import kiul.kiulsmputilitiesv2.renown.RenownMethods;
-import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
-import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
+import kiul.kiulsmputilitiesv2.config.PlayerConfig;
+import kiul.kiulsmputilitiesv2.config.RenownConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 public class Commands implements TabExecutor {
@@ -103,9 +100,9 @@ public class Commands implements TabExecutor {
             case "restart-in":
                 if (!C.restarting && p.isOp()) {
                     C.restarting = true;
-                    p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                    Bukkit.broadcastMessage(ChatColor.YELLOW + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                     Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "RESTART" + ChatColor.RESET + ChatColor.GRAY + " » " + ChatColor.WHITE + "Server Restarting In " + ChatColor.RED + args[0] + "m");
-                    p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                    Bukkit.broadcastMessage(ChatColor.YELLOW + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                     new BukkitRunnable() {
                         int minutes = Integer.parseInt(args[0]);
                         int tick = 0;
@@ -116,15 +113,15 @@ public class Commands implements TabExecutor {
                                 tick++;
                                 warnFrequency++;
                                 if (warnFrequency >= 2) {
-                                    p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                                    Bukkit.broadcastMessage(ChatColor.YELLOW + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                                     Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "RESTART" + ChatColor.RESET + ChatColor.GRAY + " » " + ChatColor.WHITE + "Server Restarting In " + ChatColor.RED + (minutes - tick) + "m");
-                                    p.sendMessage(ChatColor.YELLOW + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                                    Bukkit.broadcastMessage(ChatColor.YELLOW + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                                     warnFrequency = 0;
                                 }
                             } else {
-                                p.sendMessage(ChatColor.RED + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                                Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                                 Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "RESTART" + ChatColor.RESET + ChatColor.GRAY + "»" + ChatColor.WHITE + "Server Restarting");
-                                p.sendMessage(ChatColor.RED + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+                                Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                                 Bukkit.getServer().shutdown();
                                 cancel();
                             }
@@ -134,7 +131,31 @@ public class Commands implements TabExecutor {
                 } else {
                     p.sendMessage(C.prefix + ChatColor.RED+"Restart has already been scheduled");
                 }
+                break;
+            case "noobprotection":
+                if (p.isOp()) {
+                    boolean toggle = PlayerConfig.get().getBoolean("long-protection");
+                    PlayerConfig.get().set("long-protection", !toggle);
+                    p.sendMessage(C.prefix + "long noob protection is now: " + toggle);
+                } else {
+                    p.sendMessage(C.prefix + ChatColor.RED + "You must be operator to run this command.");
+                }
+                break;
+            case "claim":
+                if (PlayerConfig.get().getItemStack(p.getUniqueId()+".claim") != null) {
+                    if (p.getInventory().firstEmpty() == -1) {
+                        p.sendMessage(C.prefix + "clear a slot from your inventory first!");
+                        return true;
+                    }
+                    p.getInventory().setItem(p.getInventory().firstEmpty(),PlayerConfig.get().getItemStack(p.getUniqueId()+".claim"));
+                    PlayerConfig.get().set(p.getUniqueId()+".claim", null);
+                    p.sendMessage(C.prefix + "reward claimed!");
+                    PlayerConfig.save();
 
+
+                } else {
+                    p.sendMessage(C.prefix + "you have nothing to claim!");
+                }
         }
         return false;
     }

@@ -1,4 +1,4 @@
-package kiul.kiulsmputilitiesv2.renown.config;
+package kiul.kiulsmputilitiesv2.config;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;

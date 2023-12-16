@@ -2,8 +2,8 @@ package kiul.kiulsmputilitiesv2.renown.listeners;
 
 import kiul.kiulsmputilitiesv2.C;
 import kiul.kiulsmputilitiesv2.renown.RenownMethods;
-import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
-import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
+import kiul.kiulsmputilitiesv2.config.PlayerConfig;
+import kiul.kiulsmputilitiesv2.config.RenownConfig;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
@@ -14,7 +14,6 @@ import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class PlayerKill implements Listener {

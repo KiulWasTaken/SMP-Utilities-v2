@@ -1,23 +1,12 @@
 package kiul.kiulsmputilitiesv2.renown.listeners;
 
 import kiul.kiulsmputilitiesv2.C;
-import kiul.kiulsmputilitiesv2.renown.config.PlayerConfig;
-import kiul.kiulsmputilitiesv2.renown.config.RenownConfig;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.Statistic;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BountyParticles implements Listener {
 
@@ -31,7 +20,7 @@ public class BountyParticles implements Listener {
             public void run() {
                 for (Player onlinePlayers : Bukkit.getOnlinePlayers()) {
                     String currentVelocity = onlinePlayers.getVelocity().toString();
-                    if (PlayerKill.calculateKillValue(onlinePlayers) > 500 && currentVelocity.equals(targetVelocity)) {
+                    if (PlayerKill.calculateKillValue(onlinePlayers) > 600 && currentVelocity.equals(targetVelocity)) {
                         for (Entity e : onlinePlayers.getNearbyEntities(15,15,15)) {
                             if (e instanceof Player) {
                                 if (PlayerKill.calculateKillValue(onlinePlayers) < 1000) {
