@@ -16,62 +16,49 @@ import java.util.HashMap;
 
 public class Interact implements Listener {
 
-    public static HashMap<Player, Location> targetedLocation = new HashMap<>();
-    public static HashMap<Player, Player> targetedPlayer = new HashMap<>();
+    public static HashMap<Player, Integer> playerTarget = new HashMap<>();
 
     @EventHandler
     public void interactEvent(PlayerInteractEvent e) {
         Player p = e.getPlayer();
 
-        if (e.getItem() != null && e.getItem().getType() == Material.COMPASS) {
-            ItemStack compass = e.getItem();
-            CompassMeta compassMeta = (CompassMeta) compass.getItemMeta();
-            if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) { //Change target
-                trackPlayer(p);
-            } else if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) { //Update target location
-                if (targetedPlayer.containsKey(p)) {
-                    if (targetedPlayer.get(p).isOnline()) {
-                        targetedLocation.get(p).getBlock().setType(Material.BEDROCK);
-                        Location loc = targetedLocation.get(p);
-                        loc.setY(-64);
-                        loc.getBlock().setType(Material.LODESTONE);
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(C.plugin, new Runnable() {
-                            @Override
-                            public void run() {
-                                compassMeta.setLodestone(loc);
-                                compassMeta.setLodestoneTracked(true);
-                                compass.setItemMeta(compassMeta);
-                            }
-                        }, 1);
+        if (p.getInventory().getItemInMainHand().getType().equals(Material.COMPASS)) {
+            if (!C.overflowingPlayers.isEmpty()) {
+                if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                    if (playerTarget.get(p) != null) {
+                        Player targetPlayer = C.overflowingPlayers.get(playerTarget.get(p));
+                        Location targetLocation = targetPlayer.getLocation();
+                        ItemStack playersItem = p.getInventory().getItemInMainHand();
+                        CompassMeta compassMeta = (CompassMeta) playersItem.getItemMeta();
+                        compassMeta.setDisplayName(ChatColor.GOLD + "Renown Compass");
+                        if (targetLocation.getWorld() != p.getWorld()) {
+                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Target Dimension:  " + targetPlayer.getWorld().toString()));
+                            compassMeta.setLodestone(targetLocation);
+                            compassMeta.setLodestoneTracked(false);
+                            playersItem.setItemMeta(compassMeta);
+                            return;
+                        }
+                        compassMeta.setLodestone(targetLocation);
+                        compassMeta.setLodestoneTracked(false);
+                        playersItem.setItemMeta(compassMeta);
+                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Target Position Updated"));
                     } else {
-                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(C.t("&cPlayer cannot be tracked anymore!")));
-                        targetedLocation.get(p).getBlock().setType(Material.BEDROCK);
-                        targetedPlayer.remove(p);
-                        trackPlayer(p);
+                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Select a Target (left-click)"));
                     }
-                } else {
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(C.t("&cYet to start tracking anyone! &8Left-Click")));
-                }
-            }
-        }
-
-    }
-
-    private static void trackPlayer(Player p) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player != p) {
-                if (targetedPlayer.containsKey(p)) {
-                    if (targetedPlayer.get(p) != player) {
-                        targetedPlayer.put(p, player);
-                        targetedLocation.put(p, player.getLocation());
-                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(C.t("&6Started tracking a new player! &8Right click to update")));
+                } else if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
+                    if (playerTarget.get(p) == null) {
+                        playerTarget.put(p, 0);
                     }
-                } else {
-                    targetedPlayer.put(p, player);
-                    targetedLocation.put(p, player.getLocation());
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(C.t("&6Started tracking a player! &8Right click to update")));
+                    int trackNum = playerTarget.get(p);
+                    trackNum++;
+                    if (trackNum >= playerTarget.size()) {
+                        trackNum = 0;
+                    }
+                    playerTarget.put(p, trackNum);
+                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Changed Targets"));
                 }
-                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.2f, 2);
+            } else {
+                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "No Players To Track"));
             }
         }
     }

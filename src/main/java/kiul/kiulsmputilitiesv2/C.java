@@ -25,6 +25,7 @@ public class C { //Inner-Config
     public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
     public static List<Player> overflowingPlayers = (List<Player>)RenownConfig.get().getList("overflowing");
 
+
     //
     /** Configurable-shit */
     public static double dailyRenownCap = 600.00; //Cap of renown before overflow
