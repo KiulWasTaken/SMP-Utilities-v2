@@ -27,13 +27,6 @@ public class ProtectionConfig implements Listener {
 
         if (!p.hasPlayedBefore()) {
             protectedPlayers.add(p);
-            Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-            Team starTeam = scoreboard.getTeam("star");
-            if (starTeam == null) {
-                starTeam = scoreboard.registerNewTeam("star");
-                starTeam.setSuffix(ChatColor.YELLOW + " ★");
-            }
-            starTeam.addEntry(p.getName());
             if (PlayerConfig.get().getBoolean("long-protection")) {
                 disableTime = now + (2*1000*60*60);
 
@@ -54,9 +47,6 @@ public class ProtectionConfig implements Listener {
                     if (p != null) {
                         if (System.currentTimeMillis() > PlayerConfig.get().getLong("protection-disable-time")) {
                             protectedPlayers.remove(p);
-                            Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-                            Team starTeam = scoreboard.getTeam("star");
-                            starTeam.removeEntry(p.getName());
                             cancel();
                         }
                     } else {

@@ -104,7 +104,7 @@ public class RenownMethods {
             TextComponent message = new TextComponent(ChatColor.GREEN + "[CLICK HERE]");
             TextComponent message2 = new TextComponent(" "+ ChatColor.YELLOW + "or run " + ChatColor.GOLD + "/claim" + ChatColor.YELLOW + " to claim your reward.");
             message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "claim"));
-            p.sendMessage(ChatColor.BLUE + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ " + ChatColor.RESET + ChatColor.BLUE + C.symbol + ChatColor.STRIKETHROUGH + " ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+            p.sendMessage(ChatColor.BLUE + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ " + ChatColor.RESET + ChatColor.GOLD + C.symbol + ChatColor.STRIKETHROUGH + ChatColor.BLUE+ " ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
             p.sendMessage(ChatColor.YELLOW + "You have received a supply crate key for collecting the most daily renown in the past 24 hours.");
             p.spigot().sendMessage(message,message2);
             p.sendMessage(ChatColor.BLUE + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");

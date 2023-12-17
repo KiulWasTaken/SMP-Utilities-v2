@@ -12,9 +12,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Commands implements TabExecutor {
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command cmd, String label, String[] args) {
@@ -22,7 +26,7 @@ public class Commands implements TabExecutor {
         switch (label) {
             case "renown":
                 if (args.length == 0) {
-                    p.sendMessage(C.prefix + ChatColor.GRAY + "Personal Renown: " + ChatColor.WHITE + RenownConfig.get().getDouble(p.getUniqueId().toString()+".total") + ChatColor.GRAY + " (" + (RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily") + ") " + C.symbol));
+                    p.sendMessage(C.prefix + ChatColor.GRAY + "Personal Renown: " + ChatColor.WHITE + df.format(RenownConfig.get().getDouble(p.getUniqueId().toString()+".total")) + ChatColor.GRAY + " (" + df.format((RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily")) + ") " + C.symbol));
                 } else {
                     switch (args[0]) {
                         case "showalerts":
@@ -51,7 +55,7 @@ public class Commands implements TabExecutor {
                                     .forEachOrdered(x -> sortedRenown.put(x.getKey(), x.getValue()));
 
                             List<String> keys = new ArrayList<>(sortedRenown.keySet());
-
+                            keys.remove("overflowing");
                             int playersPerPage = 10;
                             int page = 1;
                             if (args.length == 2) {
@@ -66,14 +70,16 @@ public class Commands implements TabExecutor {
                             try {
                                 keys.get(i);
                                 if (page > 0 && sortedRenown.size() > 0 && sortedRenown.size() <= (sortedRenown.size() - 1 / playersPerPage) * playersPerPage) {
-                                    p.sendMessage(C.t("&#39f782Renown leaderboard &6- &#578063page &c" + page + "&#578063 of &c" + (sortedRenown.size() / playersPerPage + 1)));
+                                    p.sendMessage(C.t("&6&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ &6" + C.symbol + "&6&m ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"));
                                     for (i = (page - 1) * playersPerPage; i >= page - 1 * 5 && i <= page * 5; i++) {
                                         String key = keys.get(i);
-                                        p.sendMessage(C.t("&#baad49#" + (i + 1) + "&6. &#8d959e" + Bukkit.getOfflinePlayer(UUID.fromString(key)).getName() + " &8» &#7bd488" + sortedRenown.get(key)));
+                                        p.sendMessage(C.t("&e#" + (i + 1) + "&6. &e" + Bukkit.getOfflinePlayer(UUID.fromString(key)).getName() + " &8» &#7bd488" + df.format(sortedRenown.get(key))+" &7(" + df.format(RenownConfig.get().getDouble(UUID.fromString(key)+".daily")) + ")"));
                                         if (i == page * playersPerPage - 1 || i == sortedRenown.size() - 1) {
                                             break;
                                         }
                                     }
+                                    p.sendMessage(C.t("&ePage &c" + page + "&e of &c" + (sortedRenown.size() / playersPerPage + 1)));
+                                    p.sendMessage(C.t("&6&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"));
                                 } else {
                                     p.sendMessage(C.genericFail);
                                 }
@@ -82,14 +88,43 @@ public class Commands implements TabExecutor {
                             }
                             break;
                         case "overflow":
+                            HashMap<UUID,Long> disableMap = new HashMap<>();
                             // Disable player cap - enable "overflow", allowing player to earn extra renown.
                             if (RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") >= C.dailyRenownCap) {
-                                PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow", true);
-                                if (RenownMethods.differenceStorage.containsKey(p.getUniqueId())) {
-                                    RenownConfig.get().set(p.getUniqueId().toString() + ".daily", RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily" + RenownMethods.differenceStorage.get(p.getUniqueId())));
-                                    RenownConfig.save();
+                                if (PlayerConfig.get().getBoolean(p.getUniqueId()+".overflow") == false) {
+                                    PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow", true);
+                                    C.overflowingPlayers.add(p);
+                                    Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " " + C.overflowingPlayers.size() + " Player(s) are currently using overflow.");
+                                    long now = System.currentTimeMillis();
+                                    long disableTime = (now+1000*60*60*3);
+                                    UUID pUUID = p.getUniqueId();
+                                    disableMap.put(pUUID,disableTime);
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            if (System.currentTimeMillis() >= disableTime) {
+                                                PlayerConfig.get().set(pUUID+".overflow",false);
+                                                if (p != null) {
+                                                    p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " You have run out of overflow and can no longer gain extra renown today.");
+                                                }
+                                                disableMap.remove(pUUID);
+                                                cancel();
+                                            }
+                                        }
+                                    }.runTaskTimer(C.plugin,0,1200);
+                                    if (RenownMethods.differenceStorage.containsKey(p.getUniqueId())) {
+                                        RenownConfig.get().set(p.getUniqueId().toString() + ".daily", RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily" + RenownMethods.differenceStorage.get(p.getUniqueId())));
+                                        RenownConfig.save();
+                                    }
+                                    PlayerConfig.save();
+
+                                } else {
+                                    Calendar calendar = Calendar.getInstance();
+                                    calendar.setTimeInMillis(disableMap.get(p.getUniqueId()));
+                                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                                    String dateString = sdf.format(calendar.getTime());
+                                    p.sendMessage(C.prefix + "Overflow will expire in: " + ChatColor.RED + dateString);
                                 }
-                                PlayerConfig.save();
                             } else {
                                 p.sendMessage(C.prefix + "You have not surpassed the daily limit of: " + C.dailyRenownCap + " " + C.symbol);
                             }

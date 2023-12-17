@@ -22,6 +22,7 @@ public class Join implements Listener {
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".overflow", false);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".value", 0);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".claim", null);
+        PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".kills",0);
         RenownConfig.get().addDefault(p.getUniqueId().toString() + ".daily", 0.0);
         RenownConfig.get().addDefault(p.getUniqueId().toString() + ".total", 0.0);
         RenownConfig.save();

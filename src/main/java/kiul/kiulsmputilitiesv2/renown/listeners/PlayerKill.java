@@ -22,8 +22,10 @@ public class PlayerKill implements Listener {
     public void deathEvent(PlayerDeathEvent e) {
         Player deadPlayer = e.getEntity();
         if (deadPlayer.getKiller() != null) {
+            PlayerConfig.get().set(deadPlayer.getUniqueId().toString() + ".kills",0);
 
             Player killerPlayer = e.getEntity().getKiller();
+            PlayerConfig.get().set(killerPlayer.getUniqueId()+".kills",PlayerConfig.get().getInt(killerPlayer.getUniqueId()+".kills")+1);
             double givenRenown = calculateKillValue(deadPlayer);
 
             if (PlayerConfig.get().getBoolean(deadPlayer.getUniqueId() + ".overflow")) {
@@ -79,10 +81,11 @@ public class PlayerKill implements Listener {
         }
     }
     public static double calculateKillValue (Player p) {
+        int recentKills = (PlayerConfig.get().getInt(p.getUniqueId()+".kills")/5);
         double deadPlayerRenown = RenownConfig.get().getDouble(p.getUniqueId() + ".total");
         double euler = 2.718281828459;
         double time = (p.getStatistic(Statistic.TIME_SINCE_DEATH)/20/60/60) + armorValue(p) + PlayerConfig.get().getInt(p.getUniqueId()+".value");;
-        double givenRenown = (0.8 + (deadPlayerRenown / 10000)) / (0.001 + Math.pow(euler,(-time - 1.4)));
+        double givenRenown = (0.8 + recentKills + (deadPlayerRenown / 10000)) / (0.001 + Math.pow(euler,(-time - 1.4)));
         return givenRenown;
     }
 }
