@@ -40,7 +40,7 @@ public class RenownMethods {
                     double difference = RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily")+amount-C.dailyRenownCap;
                     p.sendMessage(ChatColor.RED + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                     p.sendMessage(ChatColor.YELLOW + "You have reached the daily " + ChatColor.WHITE+ "Renown " + C.symbol + ChatColor.YELLOW + " limit, to bypass the daily limit run: " + ChatColor.RED + " /renown overflow");
-                    p.sendMessage(ChatColor.WHITE + "" + difference + ChatColor.WHITE + " Renown " + C.symbol + ChatColor.YELLOW + " was left over when you passed the limit. To claim this renown enable " + ChatColor.RED + "overflow");
+                    p.sendMessage(ChatColor.WHITE + "" + df.format(difference) + ChatColor.WHITE + " Renown " + C.symbol + ChatColor.YELLOW + " was left over when you passed the limit. To claim this renown enable " + ChatColor.RED + "overflow");
                     p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "WARNING:" + ChatColor.RESET + ChatColor.RED + " Enabling overflow will reveal your location to anyone with a renown compass. Use at your own risk.");
                     p.sendMessage(ChatColor.RED + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                     warnedPlayers.add(p.getUniqueId());

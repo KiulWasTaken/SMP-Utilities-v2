@@ -1,5 +1,6 @@
 package kiul.kiulsmputilitiesv2;
 
+import kiul.kiulsmputilitiesv2.antipieray.AntiPieRay;
 import kiul.kiulsmputilitiesv2.itemhistory.listeners.ItemCraft;
 import kiul.kiulsmputilitiesv2.itemhistory.listeners.ItemPickupAfterDeath;
 import kiul.kiulsmputilitiesv2.noobprotection.ProtectionConfig;
@@ -25,8 +26,8 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        PlayerConfig.setup();
         RenownConfig.setup();
+        PlayerConfig.setup();
         //Listeners
         getServer().getPluginManager().registerEvents(new PlayerKill(),this);
         getServer().getPluginManager().registerEvents(new Join(),this);
@@ -40,6 +41,7 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ProtectionConfig(),this);
         getServer().getPluginManager().registerEvents(new ItemPickupAfterDeath(),this);
         getServer().getPluginManager().registerEvents(new ItemInteract(),this);
+        getServer().getPluginManager().registerEvents(new AntiPieRay(),this);
 
         //Commands
         getCommand("noobprotection").setExecutor(new Commands());

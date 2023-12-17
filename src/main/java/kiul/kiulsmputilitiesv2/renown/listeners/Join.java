@@ -18,14 +18,16 @@ public class Join implements Listener {
     }
 
     public static void createPlayerConfigPaths(Player p) {
+        PlayerConfig.get().options().copyDefaults(true);
+        RenownConfig.get().options().copyDefaults(true);
+        RenownConfig.get().addDefault(p.getUniqueId().toString() + ".daily", 0.00);
+        RenownConfig.get().addDefault(p.getUniqueId().toString() + ".total", 0.00);
+        RenownConfig.save();
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".alerts", false);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".overflow", false);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".value", 0);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".claim", null);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".kills",0);
-        RenownConfig.get().addDefault(p.getUniqueId().toString() + ".daily", 0.0);
-        RenownConfig.get().addDefault(p.getUniqueId().toString() + ".total", 0.0);
-        RenownConfig.save();
         PlayerConfig.save();
     }
 }

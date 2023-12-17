@@ -26,7 +26,9 @@ public class Commands implements TabExecutor {
         switch (label) {
             case "renown":
                 if (args.length == 0) {
-                    p.sendMessage(C.prefix + ChatColor.GRAY + "Personal Renown: " + ChatColor.WHITE + df.format(RenownConfig.get().getDouble(p.getUniqueId().toString()+".total")) + ChatColor.GRAY + " (" + df.format((RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily")) + ") " + C.symbol));
+                    double total = RenownConfig.get().getDouble(p.getUniqueId().toString()+".total");
+                    double daily = RenownConfig.get().getDouble(p.getUniqueId().toString()+".daily");
+                    p.sendMessage(C.prefix + ChatColor.GRAY + "Personal Renown: " + ChatColor.WHITE + df.format(total) + ChatColor.GRAY + " (" + df.format(daily) + ") " + C.symbol);
                 } else {
                     switch (args[0]) {
                         case "showalerts":
@@ -43,10 +45,14 @@ public class Commands implements TabExecutor {
                         case "top":
                             ConfigurationSection cf = RenownConfig.get().getConfigurationSection("");
 
+                            List<String> cfa = new ArrayList<>(cf.getKeys(false));
+                            cfa.remove("overflowing");
+
                             HashMap<String, Integer> unsortedBalance = new HashMap<>();
-                            for (String keys : cf.getKeys(false)) {
+                            for (String keys : cfa) {
                                 unsortedBalance.put(keys, RenownConfig.get().getInt(keys + ".total"));
                             }
+
 
                             LinkedHashMap<String, Integer> sortedRenown = new LinkedHashMap<>();
                             unsortedBalance.entrySet()
@@ -55,7 +61,6 @@ public class Commands implements TabExecutor {
                                     .forEachOrdered(x -> sortedRenown.put(x.getKey(), x.getValue()));
 
                             List<String> keys = new ArrayList<>(sortedRenown.keySet());
-                            keys.remove("overflowing");
                             int playersPerPage = 10;
                             int page = 1;
                             if (args.length == 2) {
@@ -78,6 +83,7 @@ public class Commands implements TabExecutor {
                                             break;
                                         }
                                     }
+                                    p.sendMessage("");
                                     p.sendMessage(C.t("&ePage &c" + page + "&e of &c" + (sortedRenown.size() / playersPerPage + 1)));
                                     p.sendMessage(C.t("&6&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"));
                                 } else {
@@ -113,7 +119,7 @@ public class Commands implements TabExecutor {
                                         }
                                     }.runTaskTimer(C.plugin,0,1200);
                                     if (RenownMethods.differenceStorage.containsKey(p.getUniqueId())) {
-                                        RenownConfig.get().set(p.getUniqueId().toString() + ".daily", RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily" + RenownMethods.differenceStorage.get(p.getUniqueId())));
+                                        RenownConfig.get().set(p.getUniqueId().toString() + ".daily", RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") + RenownMethods.differenceStorage.get(p.getUniqueId()));
                                         RenownConfig.save();
                                     }
                                     PlayerConfig.save();
