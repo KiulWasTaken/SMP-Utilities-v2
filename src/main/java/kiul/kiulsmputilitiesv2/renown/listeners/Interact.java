@@ -42,6 +42,7 @@ public class Interact implements Listener {
                         compassMeta.setLodestoneTracked(false);
                         playersItem.setItemMeta(compassMeta);
                         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Target Position Updated"));
+                        p.playSound(p,Sound.BLOCK_LEVER_CLICK,0.9f,1f);
                     } else {
                         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Select a Target (left-click)"));
                     }
@@ -56,6 +57,7 @@ public class Interact implements Listener {
                     }
                     playerTarget.put(p, trackNum);
                     p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Changed Targets"));
+                    p.playSound(p,Sound.BLOCK_STONE_BUTTON_CLICK_ON,0.9f,1f);
                 }
             } else {
                 p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "No Players To Track"));

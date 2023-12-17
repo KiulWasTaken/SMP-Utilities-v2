@@ -1,6 +1,5 @@
 package kiul.kiulsmputilitiesv2;
 
-import kiul.kiulsmputilitiesv2.antipieray.AntiPieRay;
 import kiul.kiulsmputilitiesv2.itemhistory.listeners.ItemCraft;
 import kiul.kiulsmputilitiesv2.itemhistory.listeners.ItemPickupAfterDeath;
 import kiul.kiulsmputilitiesv2.noobprotection.ProtectionConfig;
@@ -14,10 +13,14 @@ import kiul.kiulsmputilitiesv2.supplydrop.listeners.CrateInventoryClick;
 import kiul.kiulsmputilitiesv2.supplydrop.listeners.ItemInteract;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+
+import static kiul.kiulsmputilitiesv2.renown.RenownMethods.differenceStorage;
+import static kiul.kiulsmputilitiesv2.renown.RenownMethods.warnedPlayers;
 
 public final class KiulSMPUtilitiesv2 extends JavaPlugin {
 
@@ -26,8 +29,16 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+
+        //Config
         RenownConfig.setup();
+        RenownConfig.save();
         PlayerConfig.setup();
+        PlayerConfig.get().addDefault("long-protection",false);
+        PlayerConfig.save();
+        RenownMethods.initializeDailyRenownResetClock();
+        BountyParticles.startRepeatingMovementCheck();
+
         //Listeners
         getServer().getPluginManager().registerEvents(new PlayerKill(),this);
         getServer().getPluginManager().registerEvents(new Join(),this);
@@ -41,7 +52,7 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ProtectionConfig(),this);
         getServer().getPluginManager().registerEvents(new ItemPickupAfterDeath(),this);
         getServer().getPluginManager().registerEvents(new ItemInteract(),this);
-        getServer().getPluginManager().registerEvents(new AntiPieRay(),this);
+        getServer().getPluginManager().registerEvents(new Interact(),this);
 
         //Commands
         getCommand("noobprotection").setExecutor(new Commands());
@@ -52,14 +63,6 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
         //Dependencies
         C.luckPerms = getServer().getServicesManager().load(LuckPerms.class);
 
-        //Config
-        RenownConfig.get().addDefault("overflowing",new ArrayList<Player>());
-        RenownConfig.save();
-        PlayerConfig.get().addDefault("long-protection",false);
-        PlayerConfig.save();
-        RenownMethods.initializeDailyRenownResetClock();
-        BountyParticles.startRepeatingMovementCheck();
-
         PlayerConfig.get().options().copyDefaults(true);
         for (Player player : Bukkit.getOnlinePlayers()) {
             Join.createPlayerConfigPaths(player);
@@ -69,7 +72,6 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        RenownConfig.get().set("overflowing",C.overflowingPlayers);
-        RenownConfig.save();
+
     }
 }

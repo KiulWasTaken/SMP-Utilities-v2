@@ -19,6 +19,7 @@ import java.util.*;
 public class Commands implements TabExecutor {
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
+    private static HashMap<UUID,Long> disableMap = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command cmd, String label, String[] args) {
@@ -46,7 +47,6 @@ public class Commands implements TabExecutor {
                             ConfigurationSection cf = RenownConfig.get().getConfigurationSection("");
 
                             List<String> cfa = new ArrayList<>(cf.getKeys(false));
-                            cfa.remove("overflowing");
 
                             HashMap<String, Integer> unsortedBalance = new HashMap<>();
                             for (String keys : cfa) {
@@ -94,43 +94,50 @@ public class Commands implements TabExecutor {
                             }
                             break;
                         case "overflow":
-                            HashMap<UUID,Long> disableMap = new HashMap<>();
+
                             // Disable player cap - enable "overflow", allowing player to earn extra renown.
                             if (RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") >= C.dailyRenownCap) {
                                 if (PlayerConfig.get().getBoolean(p.getUniqueId()+".overflow") == false) {
-                                    PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow", true);
-                                    C.overflowingPlayers.add(p);
-                                    Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " " + C.overflowingPlayers.size() + " Player(s) are currently using overflow.");
-                                    long now = System.currentTimeMillis();
-                                    long disableTime = (now+1000*60*60*3);
-                                    UUID pUUID = p.getUniqueId();
-                                    disableMap.put(pUUID,disableTime);
-                                    new BukkitRunnable() {
-                                        @Override
-                                        public void run() {
-                                            if (System.currentTimeMillis() >= disableTime) {
-                                                PlayerConfig.get().set(pUUID+".overflow",false);
-                                                if (p != null) {
-                                                    p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " You have run out of overflow and can no longer gain extra renown today.");
+                                    if (PlayerConfig.get().get(p.getUniqueId()+".overflow-timestamp") == null) {
+                                        PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow", true);
+                                        C.overflowingPlayers.add(p);
+                                        Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " " + C.overflowingPlayers.size() + " Player(s) are currently using overflow.");
+                                        long now = System.currentTimeMillis();
+                                        long disableTime = (now + 1000 * 60 * 60 * 3);
+                                        UUID pUUID = p.getUniqueId();
+                                        PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow-timestamp", disableTime);
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                if (p == null) {
+                                                    cancel();
                                                 }
-                                                disableMap.remove(pUUID);
-                                                cancel();
+                                                if (System.currentTimeMillis() >= disableTime  || !PlayerConfig.get().getBoolean(".overflow")) {
+                                                    PlayerConfig.get().set(pUUID + ".overflow", false);
+                                                    PlayerConfig.save();
+                                                    p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " You have run out of overflow and can no longer gain extra renown today.");
+                                                    C.overflowingPlayers.remove(p);
+                                                    Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " " + C.overflowingPlayers.size() + " Player(s) are currently using overflow.");
+                                                    cancel();
+                                                }
                                             }
+                                        }.runTaskTimer(C.plugin, 0, 1200);
+                                        if (RenownMethods.differenceStorage.containsKey(p.getUniqueId())) {
+                                            RenownConfig.get().set(p.getUniqueId().toString() + ".daily", RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") + RenownMethods.differenceStorage.get(p.getUniqueId()));
+                                            RenownConfig.save();
                                         }
-                                    }.runTaskTimer(C.plugin,0,1200);
-                                    if (RenownMethods.differenceStorage.containsKey(p.getUniqueId())) {
-                                        RenownConfig.get().set(p.getUniqueId().toString() + ".daily", RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") + RenownMethods.differenceStorage.get(p.getUniqueId()));
-                                        RenownConfig.save();
+                                        PlayerConfig.save();
+                                    } else {
+                                        p.sendMessage(C.prefix + "You have already used Overflow today.");
                                     }
-                                    PlayerConfig.save();
-
                                 } else {
                                     Calendar calendar = Calendar.getInstance();
-                                    calendar.setTimeInMillis(disableMap.get(p.getUniqueId()));
+                                    calendar.setTimeInMillis(PlayerConfig.get().getLong(p.getUniqueId().toString() + ".overflow-timestamp"));
                                     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                                     String dateString = sdf.format(calendar.getTime());
-                                    p.sendMessage(C.prefix + "Overflow will expire in: " + ChatColor.RED + dateString);
+                                    p.sendMessage(C.prefix + "Overflow will expire at: " + ChatColor.RED + dateString + " ACDT");
                                 }
+
                             } else {
                                 p.sendMessage(C.prefix + "You have not surpassed the daily limit of: " + C.dailyRenownCap + " " + C.symbol);
                             }

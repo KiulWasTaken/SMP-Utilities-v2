@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +24,7 @@ public class C { //Inner-Config
     public static boolean restarting = false;
 
     public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
-    public static List<Player> overflowingPlayers = (List<Player>)RenownConfig.get().getList("overflowing");
+    public static List<Player> overflowingPlayers = new ArrayList<>();
 
 
     //

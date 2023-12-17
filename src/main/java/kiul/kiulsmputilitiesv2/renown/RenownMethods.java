@@ -136,6 +136,7 @@ public class RenownMethods {
                     for (OfflinePlayer allPlayers : Bukkit.getOfflinePlayers()) {
                         transferRenown(allPlayers.getUniqueId());
                         PlayerConfig.get().set(allPlayers.getUniqueId().toString()+".overflow",false);
+                        PlayerConfig.get().set(allPlayers.getUniqueId().toString()+".overflow-timestamp",null);
                         if (warnedPlayers.contains(allPlayers)) {
                             warnedPlayers.remove(allPlayers);
                             differenceStorage.remove(allPlayers.getUniqueId());
@@ -144,7 +145,6 @@ public class RenownMethods {
                     if (C.overflowingPlayers != null && !C.overflowingPlayers.isEmpty()) {
                         C.overflowingPlayers.clear();
                     }
-                    RenownConfig.get().set("overflowing",new ArrayList<Player>());
                     RenownConfig.save();
                     PlayerConfig.save();
                     Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " Daily renown transfer and overflow reset has been completed.");

@@ -30,6 +30,9 @@ public class PlayerKill implements Listener {
 
             if (PlayerConfig.get().getBoolean(deadPlayer.getUniqueId() + ".overflow")) {
                 PlayerConfig.get().set(deadPlayer.getUniqueId() + ".overflow", false);
+                if (C.overflowingPlayers.contains(deadPlayer)) {
+                    C.overflowingPlayers.remove(deadPlayer);
+                }
                 givenRenown = givenRenown + RenownConfig.get().getDouble(deadPlayer.getUniqueId() + ".daily");
                 RenownConfig.get().set(deadPlayer.getUniqueId() + ".daily", 0);
 
