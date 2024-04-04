@@ -41,7 +41,7 @@ public class RenownMethods {
                     p.sendMessage(ChatColor.RED + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                     p.sendMessage(ChatColor.YELLOW + "You have reached the daily " + ChatColor.WHITE+ "Renown " + C.symbol + ChatColor.YELLOW + " limit, to bypass the daily limit run: " + ChatColor.RED + " /renown overflow");
                     p.sendMessage(ChatColor.WHITE + "" + df.format(difference) + ChatColor.WHITE + " Renown " + C.symbol + ChatColor.YELLOW + " was left over when you passed the limit. To claim this renown enable " + ChatColor.RED + "overflow");
-                    p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "WARNING:" + ChatColor.RESET + ChatColor.RED + " Enabling overflow will reveal your location to anyone with a renown compass. Use at your own risk.");
+                    p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "WARNING:" + ChatColor.RESET + ChatColor.RED + " Enabling overflow will reveal your location to anyone with a compass. Use at your own risk.");
                     p.sendMessage(ChatColor.RED + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
                     warnedPlayers.add(p.getUniqueId());
                     differenceStorage.put(p.getUniqueId(),difference);
@@ -89,7 +89,8 @@ public class RenownMethods {
                 .forEachOrdered(x -> sortedRenown.put(x.getKey(), x.getValue()));
 
         List<String> keys = new ArrayList<>(sortedRenown.keySet());
-        Player p = Bukkit.getServer().getPlayer(UUID.fromString(keys.get(0)));
+        UUID pUUID = UUID.fromString(keys.get(0));
+
         ItemStack key = new ItemStack(Material.TRIPWIRE_HOOK);
         ItemMeta keyMeta = key.getItemMeta();
         keyMeta.setLocalizedName("cratekey");
@@ -98,9 +99,13 @@ public class RenownMethods {
         lore.add(ChatColor.GRAY+"Right-Click to Consume");
         keyMeta.setLore(lore);
         key.setItemMeta(keyMeta);
-        PlayerConfig.get().set(p.getUniqueId() + ".claim",key);
+        PlayerConfig.get().set(pUUID + ".claim",key);
         PlayerConfig.save();
-        if (p != null) {
+        User user = C.luckPerms.getUserManager().getUser(pUUID);
+        Node permissionNode = PermissionNode.builder("kiultags.renown").build();
+        user.data().add(permissionNode);
+        if (Bukkit.getServer().getPlayer(pUUID) != null) {
+            Player p = Bukkit.getServer().getPlayer(pUUID);
             TextComponent message = new TextComponent(ChatColor.GREEN + "[CLICK HERE]");
             TextComponent message2 = new TextComponent(" "+ ChatColor.YELLOW + "or run " + ChatColor.GOLD + "/claim" + ChatColor.YELLOW + " to claim your reward.");
             message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "claim"));
@@ -109,9 +114,7 @@ public class RenownMethods {
             p.spigot().sendMessage(message,message2);
             p.sendMessage(ChatColor.BLUE + "" + ChatColor.STRIKETHROUGH + "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
         }
-        User user = C.luckPerms.getUserManager().getUser(p.getUniqueId());
-        Node permissionNode = PermissionNode.builder("kiultags.renown").build();
-        user.data().add(permissionNode);
+
     }
 
 
@@ -137,13 +140,22 @@ public class RenownMethods {
                         transferRenown(allPlayers.getUniqueId());
                         PlayerConfig.get().set(allPlayers.getUniqueId().toString()+".overflow",false);
                         PlayerConfig.get().set(allPlayers.getUniqueId().toString()+".overflow-timestamp",null);
+                        if (C.overflowTimer.get(allPlayers) > 0) {
+                            if (Bukkit.getPlayer(allPlayers.getUniqueId()) != null) {
+                                Bukkit.getPlayer(allPlayers.getUniqueId()).sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " Your overflow period has been cut short by the daily reset period, and you are now ineligible for overflow period survival rewards.");
+                            }
+                        }
                         if (warnedPlayers.contains(allPlayers)) {
                             warnedPlayers.remove(allPlayers);
                             differenceStorage.remove(allPlayers.getUniqueId());
                         }
                     }
+
                     if (C.overflowingPlayers != null && !C.overflowingPlayers.isEmpty()) {
                         C.overflowingPlayers.clear();
+                    }
+                    if (C.overflowTimer != null && !C.overflowTimer.isEmpty()) {
+                        C.overflowTimer.clear();
                     }
                     RenownConfig.save();
                     PlayerConfig.save();

@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Interact implements Listener {
@@ -26,7 +27,7 @@ public class Interact implements Listener {
             if (!C.overflowingPlayers.isEmpty()) {
                 if (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     if (playerTarget.get(p) != null) {
-                        Player targetPlayer = C.overflowingPlayers.get(playerTarget.get(p));
+                        Player targetPlayer = Bukkit.getPlayer(new ArrayList<>(C.overflowingPlayers).get(playerTarget.get(p)));
                         Location targetLocation = targetPlayer.getLocation();
                         ItemStack playersItem = p.getInventory().getItemInMainHand();
                         CompassMeta compassMeta = (CompassMeta) playersItem.getItemMeta();
@@ -43,6 +44,9 @@ public class Interact implements Listener {
                         playersItem.setItemMeta(compassMeta);
                         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Target Position Updated"));
                         p.playSound(p,Sound.BLOCK_LEVER_CLICK,0.9f,1f);
+                        if (p.getLocation().distance(targetPlayer.getLocation()) < C.proximityWarning) {
+                            targetPlayer.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "Proximity Alert"));
+                        }
                     } else {
                         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GOLD + "Select a Target (left-click)"));
                     }
@@ -52,7 +56,7 @@ public class Interact implements Listener {
                     }
                     int trackNum = playerTarget.get(p);
                     trackNum++;
-                    if (trackNum >= playerTarget.size()) {
+                    if (trackNum > C.overflowingPlayers.size()) {
                         trackNum = 0;
                     }
                     playerTarget.put(p, trackNum);

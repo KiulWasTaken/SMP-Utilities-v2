@@ -50,6 +50,7 @@ public class GiveRenown implements Listener {
        put(Material.IRON_ORE,1.5);
        put(Material.DIAMOND_ORE,2.0);
        put(Material.REDSTONE_ORE,0.8);
+       put(Material.GOLD_ORE,2.0);
        put(Material.LAPIS_ORE,0.8);
        put(Material.EMERALD_ORE,2.4);
        put(Material.COPPER_ORE,1.2);
@@ -60,6 +61,7 @@ public class GiveRenown implements Listener {
         put(Material.DEEPSLATE_IRON_ORE,2.3);
         put(Material.DEEPSLATE_DIAMOND_ORE,3.5);
         put(Material.DEEPSLATE_REDSTONE_ORE,1.2);
+        put(Material.GOLD_ORE,2.5);
         put(Material.DEEPSLATE_LAPIS_ORE,1.2);
         put(Material.DEEPSLATE_EMERALD_ORE,3.6);
         put(Material.DEEPSLATE_COPPER_ORE,1.8);

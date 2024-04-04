@@ -7,8 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,15 +23,18 @@ public class C { //Inner-Config
     public static boolean restarting = false;
 
     public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
-    public static List<Player> overflowingPlayers = new ArrayList<>();
+    public static Set<UUID> overflowingPlayers = new HashSet<>();
+    public static HashMap<UUID,Integer> overflowTimer = new HashMap<>();
 
 
     //
     /** Configurable-shit */
+    public static int overflowTime = 180; // Overflow duration (minutes)
     public static double dailyRenownCap = 600.00; //Cap of renown before overflow
     public static double overflowMultiplier = 1; //lower/raise the gains to our will.
     public static int dailyResetTime = 24; // Hour of the day at which the renown resets (24 hour)
     public static int dragonEggPickupDelayMinutes = 10;
+    public static int proximityWarning = 500;
 
     /** Repeatable Strings */
     public static String genericFail = C.t("&cCommand or function error, try again!");

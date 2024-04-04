@@ -1,3 +1,4 @@
+/*
 package kiul.kiulsmputilitiesv2.noobprotection;
 
 import kiul.kiulsmputilitiesv2.C;
@@ -66,3 +67,4 @@ public class ProtectionConfig implements Listener {
     }
 
 }
+*/

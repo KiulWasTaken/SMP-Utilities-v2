@@ -20,33 +20,24 @@ public class Join implements Listener {
     public void joinEvent(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         createPlayerConfigPaths(p);
+        if (C.overflowingPlayers.size() > 0) {
+            p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " " + C.overflowingPlayers.size() + " Player(s) are currently using overflow.");
+        }
         if (PlayerConfig.get().getBoolean(p.getUniqueId()+".overflow")) {
-            if (!C.overflowingPlayers.contains(p)) {
-                C.overflowingPlayers.add(p);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (p == null) {
-                            cancel();
-                        }
-                        if (System.currentTimeMillis() >= PlayerConfig.get().getLong(p.getUniqueId()+".overflow-timestamp") || !PlayerConfig.get().getBoolean(".overflow")) {
-                            PlayerConfig.get().set(p.getUniqueId()+".overflow",false);
-                            PlayerConfig.save();
-                            p.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " You have run out of overflow and can no longer gain extra renown today.");
-                            C.overflowingPlayers.remove(p);
-                            Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " " + C.overflowingPlayers.size() + " Player(s) are currently using overflow.");
-                            cancel();
-                        }
-                    }
-                }.runTaskTimer(C.plugin,0,1200);
+            C.overflowTimer.put(p.getUniqueId(),PlayerConfig.get().getInt(e.getPlayer().getUniqueId()+".overflow-timestamp"));
+            if (!C.overflowingPlayers.contains(p.getUniqueId())) {
+                C.overflowingPlayers.add(p.getUniqueId());
             }
         }
     }
 
     @EventHandler
     public void leaveEvent (PlayerQuitEvent e) {
-        if (C.overflowingPlayers.contains(e.getPlayer())) {
-            C.overflowingPlayers.remove(e.getPlayer());
+        if (C.overflowingPlayers.contains(e.getPlayer().getUniqueId())) {
+            C.overflowingPlayers.remove(e.getPlayer().getUniqueId());
+            PlayerConfig.get().set(e.getPlayer().getUniqueId()+".overflow-timestamp",C.overflowTimer.get(e.getPlayer().getUniqueId()));
+            C.overflowTimer.remove(e.getPlayer());
+            PlayerConfig.save();
         }
     }
 
