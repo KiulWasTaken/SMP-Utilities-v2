@@ -40,7 +40,7 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
         PlayerConfig.get().addDefault("long-protection",false);
         PlayerConfig.save();
         RenownMethods.initializeDailyRenownResetClock();
-        BountyParticles.startRepeatingMovementCheck();
+//        BountyParticles.startRepeatingMovementCheck();
 
         //Listeners
         getServer().getPluginManager().registerEvents(new PlayerKill(),this);
