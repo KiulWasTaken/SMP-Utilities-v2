@@ -39,7 +39,7 @@ public class ItemInteract implements Listener {
                             break;
                     }
 
-                    SpawnCrate.createNewCrate(type, 60, p.getWorld(), p);
+                    SpawnCrate.createNewCrate(type, 60, p.getWorld());
                     if (p.getInventory().getItemInHand().getAmount() == 1) {
                         p.getInventory().setItemInHand(new ItemStack(Material.AIR));
                     } else {

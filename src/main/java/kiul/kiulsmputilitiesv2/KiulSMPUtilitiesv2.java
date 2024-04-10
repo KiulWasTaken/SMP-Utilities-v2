@@ -8,6 +8,7 @@ import kiul.kiulsmputilitiesv2.renown.RenownMethods;
 import kiul.kiulsmputilitiesv2.config.PlayerConfig;
 import kiul.kiulsmputilitiesv2.config.RenownConfig;
 import kiul.kiulsmputilitiesv2.renown.listeners.*;
+import kiul.kiulsmputilitiesv2.supplydrop.SpawnCrate;
 import kiul.kiulsmputilitiesv2.supplydrop.listeners.CrateInteract;
 import kiul.kiulsmputilitiesv2.supplydrop.listeners.CrateInventoryClick;
 import kiul.kiulsmputilitiesv2.supplydrop.listeners.ItemInteract;
@@ -20,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 import static kiul.kiulsmputilitiesv2.renown.RenownMethods.differenceStorage;
@@ -27,11 +29,13 @@ import static kiul.kiulsmputilitiesv2.renown.RenownMethods.warnedPlayers;
 
 public final class KiulSMPUtilitiesv2 extends JavaPlugin {
 
-
-
     @Override
     public void onEnable() {
         // Plugin startup logic
+
+        this.saveDefaultConfig();
+
+        SpawnCrate.runAutoCrates();
 
         //Config
         RenownConfig.setup();

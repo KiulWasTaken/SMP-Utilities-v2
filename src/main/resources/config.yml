@@ -1,0 +1,6 @@
+#gets random time between 8 and 12 hours after server launch and after a suppy-drop spawns
+supplydrops:
+  isenabled: true
+  spawnfreq:
+    upper: 12
+    lower: 8

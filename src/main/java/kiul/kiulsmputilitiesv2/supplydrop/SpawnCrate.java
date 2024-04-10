@@ -31,11 +31,10 @@ public class SpawnCrate {
         int z = random.nextInt(-7900,7900);
         int y = world.getHighestBlockYAt(x,z);
         Location crateSpawnLocation = new Location(world,x,y,z);
-        return crateSpawnLocation;}
+        return crateSpawnLocation;
+    }
 
-
-
-    public static void createNewCrate (String type, int minutesUntilSpawn, World world, Player player) {
+    public static void createNewCrate (String type, int minutesUntilSpawn, World world) {
         long crateSpawnTime = (System.currentTimeMillis() + minutesUntilSpawn*60*1000);
         long remainingTime = (crateSpawnTime - System.currentTimeMillis());
         ChatColor color;
@@ -46,7 +45,7 @@ public class SpawnCrate {
         } else {
             color = ChatColor.GREEN;
         }
-        Location crateSpawnLocation = player.getLocation();
+        Location crateSpawnLocation = returnCrateLocation(world);
 
         int x = (int) crateSpawnLocation.getX();
         int y = (int) crateSpawnLocation.getY();
@@ -89,6 +88,7 @@ public class SpawnCrate {
                     Bukkit.broadcastMessage(C.eventPrefix + color + type + ChatColor.WHITE +  " drop has arrived at " + x + " " + y + " " + z);
                     Bukkit.broadcastMessage("");
                     cancel();
+                    runAutoCrates();
                     return;
                 }
                 tick++;
@@ -184,7 +184,38 @@ public class SpawnCrate {
                 }
             }
         }.runTaskTimer(C.plugin, 0L, 20L);
+    }
 
+    public static void runAutoCrates() {
+        if (C.plugin.getConfig().getBoolean("supplydrops.isenabled")) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(C.plugin, new Runnable() {
+                @Override
+                public void run() {
 
+                    Random random = new Random();
+                    String type = null;
+                    int randomType = random.nextInt(1, 3);
+
+                    switch (randomType) {
+                        case 1:
+                            type = "nether";
+                            break;
+                        case 2:
+                           type = "end";
+                    }
+
+                    createNewCrate(type, 10, Bukkit.getWorld("world"));
+
+                }
+            }, getRandomTime());
+        }
+    }
+
+    public static int getRandomTime() {
+        Random random = new Random();
+        int lowerBound = C.plugin.getConfig().getInt("supplydrops.spawnfreq.lower") * 20 * 60 * 60; //8 hours
+        int upperBound = C.plugin.getConfig().getInt("supplydrops.spawnfreq.upper") * 20 * 60 * 60; //12 hours
+        int randomTime = random.nextInt(upperBound - lowerBound) + lowerBound;
+        return randomTime;
     }
 }
