@@ -167,4 +167,15 @@ public class RenownMethods {
             }
         }.runTaskTimer(KiulSMPUtilitiesv2.getPlugin(KiulSMPUtilitiesv2.class),0,1200);
     }
+
+    public static ItemStack createUpgrade () {
+        ItemStack upgrade = new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE);
+        ItemMeta meta = upgrade.getItemMeta();
+        meta.setLocalizedName("toughness-upgrade");
+        meta.setDisplayName(ChatColor.BLUE+"Armor Toughness Upgrade");
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY+"Combine with diamond or netherite armour in the smithing table to increase armor toughness");
+        upgrade.setItemMeta(meta);
+        return upgrade;
+    }
 }
