@@ -13,10 +13,9 @@ import kiul.kiulsmputilitiesv2.supplydrop.listeners.CrateInteract;
 import kiul.kiulsmputilitiesv2.supplydrop.listeners.CrateInventoryClick;
 import kiul.kiulsmputilitiesv2.supplydrop.listeners.ItemInteract;
 import net.luckperms.api.LuckPerms;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -60,6 +59,50 @@ public final class KiulSMPUtilitiesv2 extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ItemPickupAfterDeath(),this);
         getServer().getPluginManager().registerEvents(new ItemInteract(),this);
         getServer().getPluginManager().registerEvents(new Interact(),this);
+        getServer().getPluginManager().registerEvents(new OverflowBonuses(),this);
+
+        //Recipes
+        ItemStack toughnessUpgrade = RenownMethods.createUpgrade();
+
+        ShapedRecipe toughnessUpgradeRecipe = new ShapedRecipe(new NamespacedKey(this,"toughness-upgrade"),toughnessUpgrade);
+
+        toughnessUpgradeRecipe.shape("ABA","ACA","AAA");
+
+        toughnessUpgradeRecipe.setIngredient('A', Material.NETHERITE_SCRAP);
+        toughnessUpgradeRecipe.setIngredient('B', Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE);
+        toughnessUpgradeRecipe.setIngredient('C', Material.NETHERRACK);
+
+        Bukkit.addRecipe(toughnessUpgradeRecipe);
+
+        SmithingRecipe helmetRecipe = new SmithingTransformRecipe(new NamespacedKey(this, "helmet"),
+                new ItemStack(Material.AIR), // any material seems fine
+                new RecipeChoice.MaterialChoice(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                new RecipeChoice.MaterialChoice(Material.NETHERITE_HELMET),
+                new RecipeChoice.MaterialChoice(Material.AIR)
+        );
+        Bukkit.addRecipe(helmetRecipe);
+        SmithingRecipe chestplateRecipe = new SmithingTransformRecipe(new NamespacedKey(this, "chestplate"),
+                new ItemStack(Material.AIR), // any material seems fine
+                new RecipeChoice.MaterialChoice(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                new RecipeChoice.MaterialChoice(Material.NETHERITE_CHESTPLATE),
+                new RecipeChoice.MaterialChoice(Material.AIR)
+        );
+        Bukkit.addRecipe(chestplateRecipe);
+        SmithingRecipe leggingsRecipe = new SmithingTransformRecipe(new NamespacedKey(this, "leggings"),
+                new ItemStack(Material.AIR), // any material seems fine
+                new RecipeChoice.MaterialChoice(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                new RecipeChoice.MaterialChoice(Material.NETHERITE_LEGGINGS),
+                new RecipeChoice.MaterialChoice(Material.AIR)
+        );
+        Bukkit.addRecipe(leggingsRecipe);
+        SmithingRecipe bootsRecipe = new SmithingTransformRecipe(new NamespacedKey(this, "boots"),
+                new ItemStack(Material.AIR), // any material seems fine
+                new RecipeChoice.MaterialChoice(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                new RecipeChoice.MaterialChoice(Material.NETHERITE_BOOTS),
+                new RecipeChoice.MaterialChoice(Material.AIR)
+        );
+        Bukkit.addRecipe(bootsRecipe);
+
 
         //Commands
         getCommand("noobprotection").setExecutor(new Commands());

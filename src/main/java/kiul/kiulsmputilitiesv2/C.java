@@ -19,7 +19,7 @@ public class C { //Inner-Config
 
     public static String prefix = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "SMP" + ChatColor.RESET + ChatColor.GRAY + " » ";
     public static String eventPrefix = ChatColor.RED + "" + ChatColor.BOLD + "EVENT" + ChatColor.RESET + ChatColor.GRAY + " » ";
-    public static String symbol = ChatColor.GOLD + "☠";
+    public static String symbol = ChatColor.GOLD + "☠" + ChatColor.RESET;
     public static boolean restarting = false;
 
     public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");

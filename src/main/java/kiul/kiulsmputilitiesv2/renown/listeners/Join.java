@@ -46,6 +46,7 @@ public class Join implements Listener {
         RenownConfig.get().options().copyDefaults(true);
         RenownConfig.get().addDefault(p.getUniqueId().toString() + ".daily", 0.00);
         RenownConfig.get().addDefault(p.getUniqueId().toString() + ".total", 0.00);
+        RenownConfig.get().addDefault(p.getUniqueId().toString() + ".crafts", 0);
         RenownConfig.save();
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".alerts", false);
         PlayerConfig.get().addDefault(p.getUniqueId().toString() + ".overflow", false);

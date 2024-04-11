@@ -12,6 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Commands implements TabExecutor {
@@ -82,16 +83,48 @@ public class Commands implements TabExecutor {
                             }
                             break;
                         case "overflow":
-                            // Disable player cap - enable "overflow", allowing player to earn extra renown.
-                            if (RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") >= C.dailyRenownCap) {
-                                PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow", true);
-                                if (RenownMethods.differenceStorage.containsKey(p.getUniqueId())) {
-                                    RenownConfig.get().set(p.getUniqueId().toString() + ".daily", RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily" + RenownMethods.differenceStorage.get(p.getUniqueId())));
-                                    RenownConfig.save();
+                            if (PlayerConfig.get().getBoolean(p.getUniqueId() + ".overflow") == true) {
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTimeInMillis(System.currentTimeMillis() + C.overflowTimer.get(p.getUniqueId()) * 1000);
+                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                                String dateString = sdf.format(calendar.getTime());
+                                p.sendMessage(C.prefix + "Overflow will expire at: " + ChatColor.RED + dateString + " ACDT");
+                                return false;
+                            }
+                            if (args.length > 1 && args[1] != null) {
+                                if (args[1].equalsIgnoreCase("confirm")) {
+                                    // Disable player cap - enable "overflow", allowing player to earn extra renown.
+                                    if (RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") >= C.dailyRenownCap) {
+                                        if (PlayerConfig.get().getBoolean(p.getUniqueId() + ".overflow") == false) {
+                                            if (PlayerConfig.get().get(p.getUniqueId() + ".overflow-timestamp") == null) {
+                                                PlayerConfig.get().set(p.getUniqueId().toString() + ".overflow", true);
+                                                PlayerConfig.save();
+                                                C.overflowingPlayers.add(p.getUniqueId());
+                                                Bukkit.broadcastMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " " + C.overflowingPlayers.size() + " Player(s) are currently using overflow.");
+                                                long disableTime = (60 * C.overflowTime);
+                                                C.overflowTimer.put(p.getUniqueId(), (int) disableTime);
+
+                                                if (RenownMethods.differenceStorage.containsKey(p.getUniqueId())) {
+                                                    RenownConfig.get().set(p.getUniqueId().toString() + ".daily", RenownConfig.get().getDouble(p.getUniqueId().toString() + ".daily") + RenownMethods.differenceStorage.get(p.getUniqueId()));
+                                                    RenownConfig.save();
+                                                }
+                                                PlayerConfig.save();
+                                            } else {
+                                                p.sendMessage(C.prefix + "You have already used Overflow today.");
+                                            }
+
+
+                                        } else {
+                                            p.sendMessage(C.prefix + "You have not surpassed the daily limit of: " + C.dailyRenownCap + " " + C.symbol);
+                                        }
+                                    }
+                                } else {
+                                    p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "WARNING:" + ChatColor.RESET + ChatColor.RED + " Enabling overflow will reveal your location to anyone with a compass. Use at your own risk.");
+                                    p.sendMessage(ChatColor.RED + "To confirm you want to use overflow, run " + ChatColor.YELLOW + ChatColor.UNDERLINE + "/renown overflow confirm");
                                 }
-                                PlayerConfig.save();
                             } else {
-                                p.sendMessage(C.prefix + "You have not surpassed the daily limit of: " + C.dailyRenownCap + " " + C.symbol);
+                                p.sendMessage(ChatColor.DARK_RED + "" + ChatColor.BOLD + "WARNING:" + ChatColor.RESET + ChatColor.RED + " Enabling overflow will reveal your location to anyone with a compass. Use at your own risk.");
+                                p.sendMessage(ChatColor.RED + "To confirm you want to use overflow, run " + ChatColor.YELLOW + ChatColor.UNDERLINE + "/renown overflow confirm");
                             }
                             break;
                     }

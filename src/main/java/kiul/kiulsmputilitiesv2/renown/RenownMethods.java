@@ -14,6 +14,7 @@ import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -135,14 +136,16 @@ public class RenownMethods {
             @Override
             public void run() {
                 if (System.currentTimeMillis() >= waitingUntil) {
-                    giveDailyReward();
+//                    giveDailyReward();
                     for (OfflinePlayer allPlayers : Bukkit.getOfflinePlayers()) {
                         transferRenown(allPlayers.getUniqueId());
                         PlayerConfig.get().set(allPlayers.getUniqueId().toString()+".overflow",false);
                         PlayerConfig.get().set(allPlayers.getUniqueId().toString()+".overflow-timestamp",null);
-                        if (C.overflowTimer.get(allPlayers) > 0) {
-                            if (Bukkit.getPlayer(allPlayers.getUniqueId()) != null) {
-                                Bukkit.getPlayer(allPlayers.getUniqueId()).sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " Your overflow period has been cut short by the daily reset period, and you are now ineligible for overflow period survival rewards.");
+                        if (C.overflowTimer.get(allPlayers) != null) {
+                            if (C.overflowTimer.get(allPlayers) > 0) {
+                                if (Bukkit.getPlayer(allPlayers.getUniqueId()) != null) {
+                                    Bukkit.getPlayer(allPlayers.getUniqueId()).sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "[!]" + ChatColor.RESET + ChatColor.YELLOW + " Your overflow period has been cut short by the daily reset period, and you are now ineligible for overflow period survival rewards.");
+                                }
                             }
                         }
                         if (warnedPlayers.contains(allPlayers)) {
@@ -172,9 +175,9 @@ public class RenownMethods {
         ItemStack upgrade = new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE);
         ItemMeta meta = upgrade.getItemMeta();
         meta.setLocalizedName("toughness-upgrade");
-        meta.setDisplayName(ChatColor.BLUE+"Armor Toughness Upgrade");
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY+"Combine with diamond or netherite armour in the smithing table to increase armor toughness");
+        meta.setDisplayName(ChatColor.WHITE+"Smithing Template");
+        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+        meta.setLore(List.of(ChatColor.GRAY+"Armor Toughness Upgrade"," ", ChatColor.GRAY+"Applies to:", ChatColor.BLUE+"Netherite Armour",ChatColor.GRAY+"Effects:",ChatColor.BLUE+"+0.5* Armour Toughness"," ",ChatColor.GRAY+""+ChatColor.ITALIC+"*penalties apply"));
         upgrade.setItemMeta(meta);
         return upgrade;
     }
